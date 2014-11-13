@@ -1,12 +1,9 @@
 [Destkop Entry]
+Type=Application
 Name=Bilibili for Linux
-Name[zh_CN]=哔哩哔哩
 GenericName=Bilibili for Linux
-GenericName[zh_CN]=哔哩哔哩
 Comment=Watch videos from bilibili.tv
-Comment[zh_CN]=观看 B 站视频
-Exec=/home/marguerite/Public/danmaku2ass/BiliGui.rb
+Exec=/home/marguerite/Public/BiliGui/BiliGui.rb
 Icon=/home/marguerite/Public/BiliGui/bilibili.png
 Terminal=false
-Type=Application
 Categories=AudioVideo;Video;Player;

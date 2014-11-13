@@ -1,4 +1,6 @@
 * capture console output in real time and print them on the GUI
 * get exitStatus of the command then run next URL (multi URL paste support)
 * load URLs from a file and save currently pasted URLs to a file
-* separate BiliDan and BiliGui's locations
+<del>* decouple BiliDan and BiliGui's locations</del> Done!
+* let error message fade out
+* config file system to avoid choose bilidan everytime!

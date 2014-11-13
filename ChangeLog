@@ -1,0 +1,7 @@
+0.0.2
+* decouple BiliDan and BiliGui
+* add an option to choose Bilidan.py
+* implement the error reporting system
+0.0.1
+* initial commit
+* pretty basic, just paste a URL and calls BiliDan
