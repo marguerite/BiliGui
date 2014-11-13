@@ -1,0 +1,16 @@
+[Desktop Entry]
+Icon=/home/marguerite/Public/BiliGui/bilibili.png
+
+[Destkop Entry]
+Categories=AudioVideo;Video;Player
+Comment[zh_CN]=观看 B 站视频
+Comment=Watch videos from bilibili.tv
+Exec=/home/marguerite/Public/danmaku2ass/BiliGui.rb
+GenericName[zh_CN]=哔哩哔哩
+GenericName=Bilibili for Linux
+Icon=/home/marguerite/Public/BiliGui/bilibili.png
+Name[zh_CN]=哔哩哔哩
+Name=Bilibili for Linux
+Path=/home/marguerite/Public/danmaku2ass/
+Terminal=false
+Type=Application

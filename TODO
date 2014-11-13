@@ -1,0 +1,4 @@
+* capture console output in real time and print them on the GUI
+* get exitStatus of the command then run next URL (multi URL paste support)
+* load URLs from a file and save currently pasted URLs to a file
+* separate BiliDan and BiliGui's locations
