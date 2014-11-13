@@ -40,25 +40,38 @@ class QtApp < Qt::Widget
 	def init_ui
 		grid = Qt::GridLayout.new self
 
-		nameLabel = Qt::Label.new "Please paste Bilibili URL below", self
-		@urlArea = Qt::TextEdit.new self	
+		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", self
+		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", self
+		@urlArea = Qt::TextEdit.new self
+		@bilidanPath = Qt::LineEdit.new self	
 		okButton = Qt::PushButton.new 'Fire!', self
 		clearButton = Qt::PushButton.new 'Clear', self
 
-		grid.addWidget nameLabel, 0, 0, 1, 3
-		grid.addWidget @urlArea, 1, 0, 1, 3
-		grid.addWidget okButton, 2, 1, 1, 1
-		grid.addWidget clearButton, 2, 2, 1, 1
-		grid.setColumnStretch 2, 0
+		grid.addWidget bilidanPathLabel, 0, 0, 1, 1
+		grid.addWidget @bilidanPath, 0, 1, 1, 2
+		grid.addWidget biliUrlLabel, 1, 0, 1, 3
+		grid.addWidget @urlArea, 2, 0, 1, 3
+		grid.addWidget okButton, 3, 1, 1, 1
+		grid.addWidget clearButton, 3, 2, 1, 1
+		grid.setColumnStretch 3, 0
 
 		connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
 		connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 	end
 
 	def bilidan
-		text = @urlArea.toPlainText()
-		command = "./bilidan.py #{text}"
-		exec command
+		urlText = @urlArea.toPlainText()
+		pathText = @bilidanPath.text()
+		if urlText != "" then
+			if pathText != "" then
+				command = "#{pathText}/bilidan.py #{urlText}"
+			else
+				command = "./bilidan.py #{urlText}"
+			end
+			exec command
+		else
+			puts "[ERR] you have to paste an URL!"
+		end
 	end
 
 	def clear
