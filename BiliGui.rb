@@ -2,8 +2,26 @@
 
 require 'Qt'
 require 'qtwebkit'
+require_relative 'BiliConfig'
 
-Qt.debug_level = Qt::DebugLevel::High
+#Qt.debug_level = Qt::DebugLevel::High
+
+class BiliGuiConfig
+
+        include BiliConfig
+        @@config = Biliconf.new
+
+        def put(key,value)
+                confKey = key
+                confValue = value
+                @@config.writeNewConfig(confKey,confValue)
+        end
+
+	def load
+		@@config.loadConfigs()
+	end
+
+end
 
 class QtApp < Qt::Widget
 
@@ -14,6 +32,8 @@ class QtApp < Qt::Widget
 
 	Width = 600
 	Height = 100
+	@@configw = BiliGuiConfig.new
+	@@config = @@configw.load
 
 	def initialize
 		super
@@ -46,7 +66,7 @@ class QtApp < Qt::Widget
 		grid = Qt::GridLayout.new self
 
 		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", self
-		@bilidanPath = Qt::LineEdit.new self
+		@bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], self
 		bilidanButton = Qt::PushButton.new 'Choose', self
 		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", self
 		#biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', self
@@ -102,6 +122,7 @@ class QtApp < Qt::Widget
 		userHome = `echo $HOME`.gsub(/\n/,"")
 		bilidanBin = Qt::FileDialog.getOpenFileName(self, "Please choose your bilidan.py", "#{userHome}", "Python files (*.py)")
 		@bilidanPath.setText(bilidanBin)
+		@@configw.put("BilidanPath", bilidanBin)
 	end
 
 	def biliGoWeb

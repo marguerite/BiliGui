@@ -1,5 +1,7 @@
 module	BiliConfig
 
+	VERSION = "0.0.2"
+
 	class Biliconf
 
 		@@userHome = `echo $HOME`.gsub(/\n/,"")
@@ -9,34 +11,60 @@ module	BiliConfig
 
 			@name = name
 			@path = path
-			@configEntries = []
+			@config = File.join(path, name)
+			@configEntries = {}
+
+			unless File.exist?(@config) then
+				io = File.open(@config, "w")
+				io.puts("Version=#{VERSION}")
+				io.close
+			else
+				io = File.open(@config, "r")
+				io.each_line do |line|
+					line.chomp!
+					configKey = line.gsub(/=.*/,"")
+					configValue = line.gsub(/.*=/,"")
+					@configEntries[configKey] = configValue
+				end
+				io.close
+			end
 
 		end
 
-		# test code
-		def print
-			p @name
-			p @path
-			p @configEntries
+		def writeNewConfig(key, value)
+			configKey = key
+			configValue = value
+
+			# if Key exists, then we should delete
+			if @configEntries.key?(configKey) then
+
+				require 'fileutils'
+
+				tmpfile = @config + ".tmp"
+				oldfile = @config + ".old"
+
+				open(@config, 'r') do |f0|
+					open(tmpfile, 'w') do |f1|
+						f0.each_line do |line|
+							f1.write(line) unless line.index(configKey)
+						end
+					end
+				end
+				
+				FileUtils.mv @config, oldfile
+				FileUtils.mv tmpfile, @config
+				
+			end
+
+			io = File.open(@config, "a")
+			io.puts("#{configKey}=#{configValue}")
+			io.close
+		end
+
+		def loadConfigs
+			return @configEntries
 		end
 	
 	end
 
-	# test code
-	def hello
-		a = Biliconf.new
-		a.print()
-	end
-
 end
-
-# Test codes
-
-class AConfig
-
-	include BiliConfig
-
-end
-
-a = AConfig.new
-a.hello()
