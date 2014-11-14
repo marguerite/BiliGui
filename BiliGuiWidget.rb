@@ -65,7 +65,7 @@ class QtApp < Qt::Widget
 		@bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], self
 		bilidanButton = Qt::PushButton.new 'Choose', self
 		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", self
-		#biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', self
+		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', self
 		@urlArea = Qt::TextEdit.new self
 		@messageLabel = Qt::Label.new "", self
 		@messageLabel.setStyleSheet("color: #ff0000;")	
@@ -79,7 +79,7 @@ class QtApp < Qt::Widget
 		grid.addWidget @bilidanPath, 0, 1, 1, 2
 		grid.addWidget bilidanButton, 0, 3, 1, 1
 		grid.addWidget biliUrlLabel, 1, 0, 1, 3
-		#grid.addWidget biliWebButton, 1, 3, 1, 1
+		grid.addWidget biliWebButton, 1, 3, 1, 1
 		grid.addWidget @urlArea, 2, 0, 1, 4
 		grid.addWidget @messageLabel, 3, 0, 1, 1
 		grid.addWidget okButton, 3, 2, 1, 1
@@ -88,7 +88,7 @@ class QtApp < Qt::Widget
 		grid.setColumnStretch 1, 2
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
-		#connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliGoWeb()')
+		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliGoWeb()')
 		connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
 		connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 	end

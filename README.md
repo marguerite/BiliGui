@@ -4,7 +4,12 @@ Bilibili GUI for [BiliDan](https://github.com/m13253/BiliDan)
 
 ### Installation
 
-You need ruby-qt. In openSUSE `sudo zypper in ruby-qt` will do the work
+You need ruby and `qtbindings` gem.
+
+If you have rvm, run
+
+	rvm install ruby-2.1.4
+	gem install qtbindings
 
 #### Optional
 
