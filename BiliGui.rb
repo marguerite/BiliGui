@@ -105,14 +105,16 @@ class QtApp < Qt::Widget
 			if pathText != "" && File.exists?(pathText) then
 				command = "#{pathText} #{urlText}"
 				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
-					stdout_and_error.read.split("\n").each do |line|
-						puts line							
+					stdout_and_error.each_line do |line| 
+						puts line
 					end
 				end
 			elsif File.exists?('./bilidan.py') then
 				command = "./bilidan.py #{urlText}"
 				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
-					stdout_and_error.read
+					stdout_and_error.each_line do |line|
+						puts line
+					end
                                 end
 			else
 				error = "[ERR] you need to choose bilidan.py!"
