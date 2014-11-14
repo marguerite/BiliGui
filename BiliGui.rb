@@ -94,16 +94,26 @@ class QtApp < Qt::Widget
 	end
 
 	def bilidan
+
+		require 'open3'
+
 		urlText = @urlArea.toPlainText()
 		pathText = @bilidanPath.text()
+
 		if urlText != "" then
 			# more tests ?
 			if pathText != "" && File.exists?(pathText) then
 				command = "#{pathText} #{urlText}"
-				exec command
+				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
+					stdout_and_error.read.split("\n").each do |line|
+						puts line							
+					end
+				end
 			elsif File.exists?('./bilidan.py') then
 				command = "./bilidan.py #{urlText}"
-				exec command
+				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
+					stdout_and_error.read
+                                end
 			else
 				error = "[ERR] you need to choose bilidan.py!"
 				@messageLabel.setText(error)
