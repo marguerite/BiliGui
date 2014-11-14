@@ -1,22 +1,24 @@
 module	BiliConfig
 
-	VERSION = "0.0.2"
-
 	class Biliconf
 
 		@@userHome = `echo $HOME`.gsub(/\n/,"")
-		@@configPath = File.join(@@userHome,".config")
+		@@configPath = File.join(@@userHome,".config/BiliGui")
 		
 		def initialize(name="biligui.conf", path=@@configPath)
 
 			@name = name
 			@path = path
+
+			unless Dir.exists?(@path) then
+				Dir.mkdir @path
+			end
+
 			@config = File.join(path, name)
 			@configEntries = {}
 
-			unless File.exist?(@config) then
+			unless File.exists?(@config) then
 				io = File.open(@config, "w")
-				io.puts("Version=#{VERSION}")
 				io.close
 			else
 				io = File.open(@config, "r")

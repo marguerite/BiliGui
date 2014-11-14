@@ -1,3 +1,6 @@
+0.0.3
+* implement the local config system (BiliConfig.rb)
+* you don't have to select Bilidan.py everytime
 0.0.2
 * decouple BiliDan and BiliGui
 * add an option to choose Bilidan.py
