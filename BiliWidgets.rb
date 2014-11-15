@@ -161,8 +161,14 @@ class QtApp < Qt::Widget
 	def bilidanChoose
 		userHome = `echo $HOME`.gsub(/\n/,"")
 		bilidanBin = Qt::FileDialog.getOpenFileName(self, "Please choose your bilidan.py", "#{userHome}", "Python files (*.py)")
-		@bilidanPath.setText(bilidanBin)
-		@@configw.put("BilidanPath", bilidanBin)
+		unless bilidanBin == nil then
+			if bilidanBin.index("bilidan.py") then
+				@bilidanPath.setText(bilidanBin)
+				@@configw.put("BilidanPath", bilidanBin)
+			else
+				@messageLabel.setText("[WARN] You didn't choose bilidan.py!")
+			end
+		end
 	end
 
 	def biliGoWeb

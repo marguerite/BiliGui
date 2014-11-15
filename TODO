@@ -1,6 +1,3 @@
-* capture console output in real time and print them on the GUI
-* get exitStatus of the command then run next URL (multi URL paste support)
 * load URLs from a file and save currently pasted URLs to a file
-<s>* decouple BiliDan and BiliGui's locations</s> Done!
 * let error message fade out
-<s>* config file system to avoid choose bilidan everytime!</s> Done!
+* rework the GUI to use tabs for bilibili website

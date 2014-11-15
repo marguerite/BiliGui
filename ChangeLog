@@ -1,3 +1,6 @@
+0.0.4
+* multl URLs support
+* fix: click cancel in BilidanChoose will clear biligui.conf
 0.0.3
 * implement the local config system (BiliConfig.rb)
 * you don't have to select Bilidan.py everytime
