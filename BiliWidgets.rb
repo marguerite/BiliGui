@@ -36,15 +36,15 @@ class BiliGuiUrls
 	end
 end
 
-class QtApp < Qt::Widget
+class BiliGui < Qt::Widget
 
 	slots 'bilidan()'
 	slots 'clear()'
 	slots 'bilidanChoose()'
-	slots 'biliGoWeb()'
+	slots 'biliWeb()'
 
-	Width = 600
-	Height = 100
+	Width = 800
+	Height = 400
 	@@configw = BiliGuiConfig.new
 	@@config = @@configw.load
 
@@ -76,36 +76,55 @@ class QtApp < Qt::Widget
 	end
 
 	def init_ui
-		grid = Qt::GridLayout.new self
 
-		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", self
-		@bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], self
-		bilidanButton = Qt::PushButton.new 'Choose', self
-		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", self
-		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', self
-		@urlArea = Qt::TextEdit.new self
-		@messageLabel = Qt::Label.new "", self
+		biliTabs = Qt::TabWidget.new
+		playlistTab = Qt::Widget.new
+		webTab = Qt::Widget.new
+		settingsTab = Qt::Widget.new
+
+		biliTabs.addTab	playlistTab, "BiliGui Playlist"
+		biliTabs.addTab webTab, "Bilibili.tv"
+		biliTabs.addTab settingsTab, "BiliGui Settings"
+
+		grid_biliTabs = Qt::GridLayout.new self
+		grid_biliTabs.addWidget biliTabs, 0, 0, 1, 1
+		grid_biliTabs.setColumnStretch 0, 0
+
+		# Playlist Tab		
+		grid_Playlist = Qt::GridLayout.new playlistTab
+
+		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", playlistTab
+		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
+		@urlArea = Qt::TextEdit.new playlistTab
+		@messageLabel = Qt::Label.new "", playlistTab
 		@messageLabel.setStyleSheet("color: #ff0000;")	
-		okButton = Qt::PushButton.new 'Watch', self
-		clearButton = Qt::PushButton.new 'Clear', self
-		@consoleArea = Qt::TextEdit.new self
-		@consoleArea.setVisible false
-		@consoleArea.setStyleSheet("color: #fff; background-color: #333;")
+		okButton = Qt::PushButton.new 'Play', playlistTab
+		clearButton = Qt::PushButton.new 'Clear', playlistTab
 
-		grid.addWidget bilidanPathLabel, 0, 0, 1, 1
-		grid.addWidget @bilidanPath, 0, 1, 1, 2
-		grid.addWidget bilidanButton, 0, 3, 1, 1
-		grid.addWidget biliUrlLabel, 1, 0, 1, 3
-		grid.addWidget biliWebButton, 1, 3, 1, 1
-		grid.addWidget @urlArea, 2, 0, 1, 4
-		grid.addWidget @messageLabel, 3, 0, 1, 1
-		grid.addWidget okButton, 3, 2, 1, 1
-		grid.addWidget clearButton, 3, 3, 1, 1
-		grid.addWidget @consoleArea, 4, 0, 1, 4
-		grid.setColumnStretch 1, 2
+		grid_Playlist.addWidget biliUrlLabel, 0, 0, 1, 1
+		grid_Playlist.addWidget biliWebButton, 0, 1, 1, 1
+		grid_Playlist.addWidget @urlArea, 1, 0, 1, 4
+		grid_Playlist.addWidget @messageLabel, 2, 0, 1, 2
+		grid_Playlist.addWidget okButton, 2, 2, 1, 1
+		grid_Playlist.addWidget clearButton, 2, 3, 1, 1
+		grid_Playlist.setColumnStretch 0, 0
+
+		# Settings Tab
+		grid_Settings = Qt::GridLayout.new settingsTab
+		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
+                @bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], settingsTab
+                bilidanButton = Qt::PushButton.new 'Choose', settingsTab
+
+		logo = Qt::Label.new "BiliGui is a graphical frontend for Bilidan, developed by marguerite", settingsTab
+
+		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
+		grid_Settings.addWidget @bilidanPath, 0, 1, 1, 1
+		grid_Settings.addWidget bilidanButton, 0, 2, 1, 1
+		grid_Settings.addWidget logo, 1, 1, 1, 1
+		grid_Settings.setColumnStretch 0, 0
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
-		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliGoWeb()')
+		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliWeb()')
 		connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
 		connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 	end
@@ -171,11 +190,12 @@ class QtApp < Qt::Widget
 		end
 	end
 
-	def biliGoWeb
-		biliweb = Qt::WebView.new
-		biliweb.load Qt::Url.new('http://www.bilibili.tv/')
-		biliweb.resize 1024, 640
-		biliweb.show
+	def biliWeb
+
+		@biliweb = Qt::WebView.new
+                @biliweb.load Qt::Url.new('http://bilibili.tv')
+                @biliweb.show
+
 	end
 
 end
