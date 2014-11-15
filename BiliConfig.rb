@@ -2,10 +2,11 @@ module	BiliConfig
 
 	class Biliconf
 
-		@@userHome = `echo $HOME`.gsub(/\n/,"")
-		@@configPath = File.join(@@userHome,".config/BiliGui")
+		$userHome = `echo $HOME`.gsub(/\n/,"")
+		$configPath = File.join($userHome,".config/BiliGui")
+		p "Config Path: #{$configPath}"
 		
-		def initialize(name="biligui.conf", path=@@configPath)
+		def initialize(name="biligui.conf", path=$configPath)
 
 			@name = name
 			@path = path

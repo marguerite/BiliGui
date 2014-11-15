@@ -1,7 +1,7 @@
 require 'Qt'
 require 'qtwebkit'
 require_relative 'BiliConfig'
-require_relative 'BiliUrlsHandler'
+require_relative 'BiliPlaylist'
 
 class BiliGuiConfig
 
@@ -20,20 +20,30 @@ class BiliGuiConfig
 
 end
 
-class BiliGuiUrls
+class BiliGuiPlaylist
 
-	include BiliUrlsHandler
+	include BiliPlaylist
 
-	def initialize(urls)
+	def initialize(videoURLs="")
 
-		@urls = urls
+		@videos = videoURLs
+
+		@videosHash = BiliPlaylist.new(@videos)
 
 	end
 
 	def hash
-		urlHash = BiliUrls.new(@urls)
-		return urlHash.urlBlockHash	
+		return @videosHash.hash
 	end
+
+	def save(filename="")
+		@videosHash.save(filename)
+	end
+
+	def load(playlist="")
+		BiliPlaylist.new.load(playlist)
+	end
+	
 end
 
 class BiliGui < Qt::Widget
@@ -42,6 +52,8 @@ class BiliGui < Qt::Widget
 	slots 'clear()'
 	slots 'bilidanChoose()'
 	slots 'biliWeb()'
+	slots 'biliSave()'
+	slots 'biliLoad()'
 
 	Width = 800
 	Height = 400
@@ -97,17 +109,38 @@ class BiliGui < Qt::Widget
 		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
 		@urlArea = Qt::TextEdit.new playlistTab
 		@messageLabel = Qt::Label.new "", playlistTab
-		@messageLabel.setStyleSheet("color: #ff0000;")	
+		@messageLabel.setStyleSheet("color: #ff0000;")
+		ctlPanel = Qt::Widget.new playlistTab
 		okButton = Qt::PushButton.new 'Play', playlistTab
 		clearButton = Qt::PushButton.new 'Clear', playlistTab
 
 		grid_Playlist.addWidget biliUrlLabel, 0, 0, 1, 1
 		grid_Playlist.addWidget biliWebButton, 0, 1, 1, 1
 		grid_Playlist.addWidget @urlArea, 1, 0, 1, 4
+		grid_Playlist.addWidget ctlPanel, 1, 4, 1, 1
 		grid_Playlist.addWidget @messageLabel, 2, 0, 1, 2
 		grid_Playlist.addWidget okButton, 2, 2, 1, 1
 		grid_Playlist.addWidget clearButton, 2, 3, 1, 1
 		grid_Playlist.setColumnStretch 0, 0
+
+
+		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliWeb()')
+                connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
+                connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
+
+		## controlPanel layout
+		grid_ctlPanel = Qt::GridLayout.new ctlPanel
+
+		ctlLoadButton = Qt::PushButton.new 'Load', ctlPanel
+		ctlSaveButton = Qt::PushButton.new 'Save', ctlPanel
+		ctlBlank = Qt::Label.new ctlPanel
+
+		grid_ctlPanel.addWidget ctlLoadButton, 0, 0, 1, 1
+		grid_ctlPanel.addWidget ctlSaveButton, 1, 0, 1, 1
+		grid_ctlPanel.addWidget ctlBlank, 2, 0, 3, 2
+
+		connect ctlLoadButton, SIGNAL('clicked()'), self, SLOT('biliLoad()')
+		connect ctlSaveButton, SIGNAL('clicked()'), self, SLOT('biliSave()')
 
 		# Settings Tab
 		grid_Settings = Qt::GridLayout.new settingsTab
@@ -124,9 +157,6 @@ class BiliGui < Qt::Widget
 		grid_Settings.setColumnStretch 0, 0
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
-		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliWeb()')
-		connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
-		connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 	end
 
 	def bilidan
@@ -134,7 +164,7 @@ class BiliGui < Qt::Widget
 		require 'open3'
 
 		urlText = @urlArea.toPlainText()
-		urlTextHash = BiliGuiUrls.new(urlText).hash
+		urlTextHash = BiliGuiPlaylist.new(urlText).hash 
 		pathText = @bilidanPath.text()
 
 		# validate bilidan.py path
@@ -151,6 +181,8 @@ class BiliGui < Qt::Widget
 	
 			urlTextHash.each_value do |hashvalue|
 
+				p "Now Playing: #{hashvalue}"
+
 				command = "#{pathText} #{hashvalue}"
 				Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
 					stderr.each_line do |line| 
@@ -158,6 +190,9 @@ class BiliGui < Qt::Widget
 						unless line.index("99%") then
 							@messageLabel.setText(line)
 						end
+
+						stdout.each_line {|line| p line}
+
 					end
 
 					unless wait_thr.value.success?() then
@@ -178,8 +213,7 @@ class BiliGui < Qt::Widget
 	end
 
 	def bilidanChoose
-		userHome = `echo $HOME`.gsub(/\n/,"")
-		bilidanBin = Qt::FileDialog.getOpenFileName(self, "Please choose your bilidan.py", "#{userHome}", "Python files (*.py)")
+		bilidanBin = Qt::FileDialog.getOpenFileName(self, "Please choose your bilidan.py", "#{$userHome}", "Python files (*.py)")
 		unless bilidanBin == nil then
 			if bilidanBin.index("bilidan.py") then
 				@bilidanPath.setText(bilidanBin)
@@ -196,6 +230,25 @@ class BiliGui < Qt::Widget
                 @biliweb.load Qt::Url.new('http://bilibili.tv')
                 @biliweb.show
 
+	end
+
+	def biliLoad
+		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}", "Playlist file (*.m3u8)")
+		unless playlist == nil then
+			BiliGuiPlaylist.new.load(playlist)
+		end
+	end
+	
+	def biliSave
+		if @urlArea.toPlainText().empty? then
+			p "No video URL can be saved at all!"
+		else
+			filename = Qt::FileDialog.getSaveFileName(self, "Please choose save location", "#{$configPath}", "Playlist file (*.m3u8)")
+			unless filename == nil then
+				playlist = BiliGuiPlaylist.new(@urlArea.toPlainText())
+				playlist.save(filename)
+			end
+		end
 	end
 
 end

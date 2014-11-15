@@ -1,3 +1,19 @@
-* load URLs from a file and save currently pasted URLs to a file
 * let error message fade out
-* rework the GUI to use tabs for bilibili website
+* autoload playlists
+* capture more useful informations from console output
+* more error detecting
+* Bangou (avXXXX) paste support
+* custom look and feel
+* play history
+
+future:
+
+* download videos
+** use aria2
+* upload videos
+* rewrite a native ruby Bilidan
+* fetch URL and extract stuff to fill bilibili.tv tab
+** develop a cache system, to compare timestamp, background update, etc 
+* a navigation menu on bilibili tab and by default display top 10 videos with their link and preview image
+* rearrange the video URLs, if it's not played yet, then update the stack.
+* random play

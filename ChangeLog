@@ -1,3 +1,6 @@
+0.0.5
+* switch to Tab layout for future features
+* load/save bilibili playlist file.
 0.0.4
 * multl URLs support
 * fix: click cancel in BilidanChoose will clear biligui.conf
