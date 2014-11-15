@@ -1,3 +1,5 @@
+![BiliGui Logo](https://raw.githubusercontent.com/marguerite/BiliGui/master/bilibili.png)
+
 ## BiliGui
 
 Bilibili GUI for [BiliDan](https://github.com/m13253/BiliDan)
