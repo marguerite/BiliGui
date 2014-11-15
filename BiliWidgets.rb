@@ -53,7 +53,7 @@ class QtApp < Qt::Widget
 		
 		setWindowTitle "BiliGui"
 
-		setToolTip "BiliDan GUI"
+		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
 
 		init_ui
 
