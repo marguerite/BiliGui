@@ -1,6 +1,7 @@
 require 'Qt'
 require 'qtwebkit'
 require_relative 'BiliConfig'
+require_relative 'BiliUrlsHandler'
 
 class BiliGuiConfig
 
@@ -17,6 +18,22 @@ class BiliGuiConfig
 		@@config.loadConfigs()
 	end
 
+end
+
+class BiliGuiUrls
+
+	include BiliUrlsHandler
+
+	def initialize(urls)
+
+		@urls = urls
+
+	end
+
+	def hash
+		urlHash = BiliUrls.new(@urls)
+		return urlHash.urlBlockHash	
+	end
 end
 
 class QtApp < Qt::Widget
@@ -98,41 +115,43 @@ class QtApp < Qt::Widget
 		require 'open3'
 
 		urlText = @urlArea.toPlainText()
+		urlTextHash = BiliGuiUrls.new(urlText).hash
 		pathText = @bilidanPath.text()
 
-		if urlText != "" then
-			# more tests ?
-			if pathText != "" && File.exists?(pathText) then
-				command = "#{pathText} #{urlText}"
-				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
-					stdout_and_error.each_line do |line| 
-						#@consoleArea.setVisible true
-						#@consoleArea.append(line)
-						puts line
-					end
-
-					if wait_thr.value.success?() then
-						bilidanNext()
-					end
-				end
-			elsif File.exists?('./bilidan.py') then
-				command = "./bilidan.py #{urlText}"
-				Open3.popen2e(command) do |stdin, stdout_and_error, wait_thr|
-					stdout_and_error.each_line do |line|
-						puts line
-					end
-                                end
+		# validate bilidan.py path
+		unless ! pathText.empty? && File.exists?(pathText) then
+			if File.exists?('./bilidan.py')	then
+				pathText = "./bilidan.py"
 			else
 				error = "[ERR] you need to choose bilidan.py!"
-				@messageLabel.setText(error)
+                                @messageLabel.setText(error)
 			end
+		end
+
+		unless urlTextHash.empty? then
+	
+			urlTextHash.each_value do |hashvalue|
+
+				command = "#{pathText} #{hashvalue}"
+				Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+					stderr.each_line do |line| 
+						# 99% is a common error can safely ignore
+						unless line.index("99%") then
+							@messageLabel.setText(line)
+						end
+					end
+
+					unless wait_thr.value.success?() then
+						break
+					end
+				end
+
+			end
+
 		else
 			error = "[ERR] you have to paste an URL!"
 			@messageLabel.setText(error)
 		end
-	end
-
-	def bilidanNext
 	end
 
 	def clear
