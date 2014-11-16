@@ -48,9 +48,12 @@ end
 
 class BiliGui < Qt::Widget
 
-	slots 'bilidan()'
 	slots 'clear()'
 	slots 'bilidanChoose()'
+	slots 'bilidanPlay()'
+	slots 'bilidanLogOut()'
+	slots 'bilidanLogErr()'
+	slots 'bilidanPlyButtonCtl()'
 	slots 'biliWeb()'
 	slots 'biliSave()'
 	slots 'biliLoad()'
@@ -65,7 +68,6 @@ class BiliGui < Qt::Widget
 		
 		setWindowTitle "BiliGui"
 		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
-		#setStyleSheet "QWidget {color: #ff3d6a;}"
 
 		init_ui
 
@@ -98,7 +100,7 @@ class BiliGui < Qt::Widget
 		biliTabs.addTab webTab, "Bilibili.tv"
 		biliTabs.addTab settingsTab, "BiliGui Settings"
 
-		@messageLabel = Qt::Label.new ""
+		@messageLabel = Qt::Label.new
                 @messageLabel.setStyleSheet("color: #ff0000;")
 
 		grid_biliTabs = Qt::GridLayout.new self
@@ -113,20 +115,20 @@ class BiliGui < Qt::Widget
 		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
 		@urlArea = Qt::TextEdit.new playlistTab
 		ctlPanel = Qt::Widget.new playlistTab
-		okButton = Qt::PushButton.new 'Play', playlistTab
+		@playButton = Qt::PushButton.new 'Play', playlistTab
 		clearButton = Qt::PushButton.new 'Clear', playlistTab
 
 		grid_Playlist.addWidget biliUrlLabel, 0, 0, 1, 1
 		grid_Playlist.addWidget biliWebButton, 0, 1, 1, 1
 		grid_Playlist.addWidget @urlArea, 1, 0, 1, 4
 		grid_Playlist.addWidget ctlPanel, 1, 4, 1, 1
-		grid_Playlist.addWidget okButton, 2, 2, 1, 1
+		grid_Playlist.addWidget @playButton, 2, 2, 1, 1
 		grid_Playlist.addWidget clearButton, 2, 3, 1, 1
 		grid_Playlist.setColumnStretch 0, 0
 
 
 		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliWeb()')
-                connect okButton, SIGNAL('clicked()'), self, SLOT('bilidan()')
+                connect @playButton, SIGNAL('clicked()'), self, SLOT('bilidanPlay()')
                 connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 
 		## controlPanel layout
@@ -158,10 +160,21 @@ class BiliGui < Qt::Widget
 		grid_Settings.setColumnStretch 0, 0
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
+
+		# player thread
+		@thread = Qt::Process.new
+
+		connect @thread, SIGNAL('readyReadStandardOutput()'), self, SLOT('bilidanLogOut()')
+		connect @thread, SIGNAL('readyReadStandardError()'), self, SLOT('bilidanLogErr()')
+		connect @thread, SIGNAL('finished(int, QProcess::ExitStatus)'), self, SLOT('bilidanPlyButtonCtl()')
+
 	end
 
-	def bilidan
+	def clear
+		@urlArea.clear
+	end
 
+	def bilidanPlay
 		require 'open3'
 
 		urlText = @urlArea.toPlainText()
@@ -179,38 +192,40 @@ class BiliGui < Qt::Widget
 		end
 
 		unless urlHash.empty? then
-	
-			urlHash.each_value do |value|
 
+			# play all videos
+			urlHash.each_value do |value|
 				p "Now Playing: #{value}"
 
 				command = "#{pathText} #{value}"
-				Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-					stderr.each_line do |line| 
-						# common error
-						unless line.index("Cache") then
-							@messageLabel.setText(line)
-						end
-
-						#stdout.each_line {|line| p line}
-
-					end
-
-					unless wait_thr.value.success?() then
-						break
-					end
-				end
-
+				@thread.start(command)
+				 
 			end
 
 		else
 			error = "[ERR] you have to paste an URL!"
 			@messageLabel.setText(error)
 		end
+
+		# disable Play button here
+		@playButton.setEnabled false
+
 	end
 
-	def clear
-		@urlArea.clear()
+	def bilidanLogOut
+		stdout = @thread.readAllStandardOutput.to_s.chomp!
+		p stdout
+	end
+
+	# bilidan? why buffer message redirected to stderr?!
+	def bilidanLogErr
+		stderr = @thread.readAllStandardError.to_s.chomp!
+		p stderr
+	end
+
+	def bilidanPlyButtonCtl
+		# release Play button
+		@playButton.setEnabled true
 	end
 
 	def bilidanChoose

@@ -1,3 +1,6 @@
+0.0.8
+* Asynchronously play (Qt::Process), GUI won't freeze anymore!
+* fix issue#2, disable playButton when there's something playing
 0.0.7
 * fix: BiliPlaylist::BiliSave can't override old file
 * bangou (avXXXXXX) paste support
