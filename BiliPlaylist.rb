@@ -13,45 +13,34 @@ module BiliPlaylist
 
 			unless @videos.empty? then
 
-				if @videos.index("http://") then
-					@videos.split(/\n/).each do |video|
-						unless video.index("http://") then
-							next
-						end
-						key = "av" + video.gsub(/^.*\/av/,'').gsub(/\//,'')
-						value = video
-						@hash[key] = value
-					end
-				else # bangou
-					if @videos.index(",") || @videos.index(";") then
-						if @videos.index(",") then
+				@videos.split(/\n/).each do |video|
+					if video.index(",") || video.index(";") then
+						if video.index(",") then
 							separator = ","
 						else
 							separator = ";"
 						end
 
-						@videos.split(/\n/).each do |video|
-							video.split(separator).each do |bangou|
-								unless bangou.index("av") then
-									next
-									p "[WARN] #{bangou} is not a valid bango!"
-								end
-
-								key = bangou
-								value = "http://bilibili.tv/video/" + bangou + "/"
-								@hash[key] = value
-							end
+						video.split(separator).each do |nest|
+                                                	if nest.index("http://") then
+                                                        	key = "av" + nest.gsub(/^.*\/av/,'').gsub(/\//,'')
+                                                        	@hash[key] = nest
+                                                	elsif nest.index("av") then
+                                                        	value = "http://www.bilibili.com/video/" + nest + "/"
+                                                        	@hash[nest] = value
+                                                	else
+                                                        	next
+                                                	end
 						end
-
-
 					else
-						# single bangou or no URL
-						unless @videos.index("av") then
-							p "[WARN] Did you paste anything?"
+						if video.index("http://") then
+							key = "av" + video.gsub(/^.*\/av/,'').gsub(/\//,'')
+							@hash[key] = video
+						elsif video.index("av") then
+							value = "http://www.bilibili.com/video/" + video + "/"
+							@hash[video] = value
 						else
-							key = @videos.gsub(/\n/,'')
-							value = "http://bilibili.tv/video/" + key + "/"
-							@hash[key] = value
+							next
 						end
 					end
 				end
@@ -70,34 +59,34 @@ module BiliPlaylist
 
 			playlist = filename
 
-			default_playlist = "#{$configPath}/biliplaylist.m3u8"
+			default_playlist = "#{$configPath}/playlist/biliplaylist.m3u8"
 
 			if playlist.empty? then
 				playlist = default_playlist
 			end
 
-			old_playlist = playlist + ".old"
-
 			if File.exist?(playlist) then
+				old_playlist = playlist + ".old"
 				FileUtils.mv playlist, old_playlist
-			else
-				io = open(playlist,"w")
-				io.puts "#EXTM3U"
-
-				@hash.to_a.each do |video|
-					io.puts "#EXTINF:#{video[0]}"
-					io.puts video[1]
-				end
-
-				io.close
 			end
+
+			io = open(playlist,"w")
+			io.puts "#EXTM3U"
+
+			@hash.to_a.each do |video|
+				io.puts "#EXTINF:#{video[0]}"
+				io.puts video[1]
+			end
+
+			io.close
+
 		end
 
 		def load(playlist="")
 
 			hash = {}
 
-			default_playlist = "#{$configPath}/biliplaylist.m3u8"
+			default_playlist = "#{$configPath}/playlist/biliplaylist.m3u8"
 
 			if playlist.empty? && File.exist?(default_playlist) then
 				playlist = default_playlist

@@ -8,7 +8,7 @@ module	BiliConfig
 
 		$userHome = `echo $HOME`.gsub(/\n/,"")
 		$configPath = File.join($userHome,".config/BiliGui")
-		p "Config Path: #{$configPath}"
+		$playlistPath = File.join($configPath,"playlist")
 		
 		def initialize(name="biligui.conf", path=$configPath)
 
@@ -17,6 +17,10 @@ module	BiliConfig
 
 			unless Dir.exists?(@path) then
 				Dir.mkdir @path
+			end
+
+			unless Dir.exists?(File.join(@path,"playlist")) then
+				Dir.mkdir(File.join(@path,"playlist"))
 			end
 
 			@config = File.join(path, name)

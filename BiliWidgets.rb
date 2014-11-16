@@ -179,6 +179,7 @@ class BiliGui < Qt::Widget
 
 		urlText = @urlArea.toPlainText()
 		urlHash = BiliGuiPlaylist.new(urlText).hash 
+		p urlHash
 		pathText = @bilidanPath.text()
 
 		# validate bilidan.py path
@@ -198,7 +199,7 @@ class BiliGui < Qt::Widget
 				p "Now Playing: #{value}"
 
 				command = "#{pathText} #{value}"
-				@thread.start(command)
+				#@thread.start(command)
 				 
 			end
 
@@ -249,7 +250,7 @@ class BiliGui < Qt::Widget
 	end
 
 	def biliLoad
-		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}", "Playlist file (*.m3u8)")
+		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
 		unless playlist == nil then
 			hash = BiliGuiPlaylist.new.load(playlist)
 			str = ""
@@ -264,7 +265,7 @@ class BiliGui < Qt::Widget
 		if @urlArea.toPlainText().empty? then
 			p "No video URL can be saved at all!"
 		else
-			filename = Qt::FileDialog.getSaveFileName(self, "Please choose save location", "#{$configPath}", "Playlist file (*.m3u8)")
+			filename = Qt::FileDialog.getSaveFileName(self, "Please choose save location", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
 			unless filename == nil then
 				playlist = BiliGuiPlaylist.new(@urlArea.toPlainText())
 				playlist.save(filename)
