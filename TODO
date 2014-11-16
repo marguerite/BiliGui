@@ -2,7 +2,6 @@
 * autoload playlists
 * capture more useful informations from console output (to fill BiliPlaylist metadata)
 * more error detection (use raise maybe)
-* Bangou (avXXXX) paste support (use "\n",",",";" to separate)
 * custom look and feel
 * play history
 

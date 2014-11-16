@@ -4,7 +4,7 @@ module BiliPlaylist
 
 		def initialize(videos="")
 			@videos = videos
-			@videosHash = {}
+			@hash = {}
 
 			split
 		end
@@ -13,26 +13,55 @@ module BiliPlaylist
 
 			unless @videos.empty? then
 
-			@videos.split(/\n/).each do |video|
+				if @videos.index("http://") then
+					@videos.split(/\n/).each do |video|
+						unless video.index("http://") then
+							next
+						end
+						key = "av" + video.gsub(/^.*\/av/,'').gsub(/\//,'')
+						value = video
+						@hash[key] = value
+					end
+				else # bangou
+					if @videos.index(",") || @videos.index(";") then
+						if @videos.index(",") then
+							separator = ","
+						else
+							separator = ";"
+						end
 
-				unless video.index("http://") then
-					next
+						@videos.split(/\n/).each do |video|
+							video.split(separator).each do |bangou|
+								unless bangou.index("av") then
+									next
+									p "[WARN] #{bangou} is not a valid bango!"
+								end
+
+								key = bangou
+								value = "http://bilibili.tv/video/" + bangou + "/"
+								@hash[key] = value
+							end
+						end
+
+
+					else
+						# single bangou or no URL
+						unless @videos.index("av") then
+							p "[WARN] Did you paste anything?"
+						else
+							key = @videos.gsub(/\n/,'')
+							value = "http://bilibili.tv/video/" + key + "/"
+							@hash[key] = value
+						end
+					end
 				end
-
-
-				videoHashKey = "av" + video.gsub(/^.*\/av/,"").gsub(/\//,"")
-				videoHashValue = video
-
-				@videosHash[videoHashKey] = videoHashValue
-
-			end
 
 			end
 
 		end
 
 		def hash
-			return @videosHash
+			return @hash
 		end
 
 		def save(filename="")
@@ -50,12 +79,12 @@ module BiliPlaylist
 			old_playlist = playlist + ".old"
 
 			if File.exist?(playlist) then
-				mv playlist, old_playlist
+				FileUtils.mv playlist, old_playlist
 			else
 				io = open(playlist,"w")
 				io.puts "#EXTM3U"
 
-				@videosHash.to_a.each do |video|
+				@hash.to_a.each do |video|
 					io.puts "#EXTINF:#{video[0]}"
 					io.puts video[1]
 				end
@@ -98,7 +127,7 @@ module BiliPlaylist
 						p "#{line} doesn't seem to be a Bilibili URL!"
 					else
 						value = line
-						key = "av" + line.gsub(/^.*\/av/,"").gsub(/\//,"")
+						key = "av" + value.gsub(/^.*\/av/,'').gsub(/\//,'')
 						hash[key] = value
 						array[i] = line
 					end

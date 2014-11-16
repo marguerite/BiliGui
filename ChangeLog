@@ -1,3 +1,6 @@
+0.0.7
+* fix: BiliPlaylist::BiliSave can't override old file
+* bangou (avXXXXXX) paste support
 0.0.6
 * fix: forgot to have BiliPlaylist::BiliLoad functional
 * initialize BiliWeb module, handling communication w/ bilibili.tv

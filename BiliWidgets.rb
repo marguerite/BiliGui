@@ -165,7 +165,7 @@ class BiliGui < Qt::Widget
 		require 'open3'
 
 		urlText = @urlArea.toPlainText()
-		urlTextHash = BiliGuiPlaylist.new(urlText).hash 
+		urlHash = BiliGuiPlaylist.new(urlText).hash 
 		pathText = @bilidanPath.text()
 
 		# validate bilidan.py path
@@ -178,13 +178,13 @@ class BiliGui < Qt::Widget
 			end
 		end
 
-		unless urlTextHash.empty? then
+		unless urlHash.empty? then
 	
-			urlTextHash.each_value do |hashvalue|
+			urlHash.each_value do |value|
 
-				p "Now Playing: #{hashvalue}"
+				p "Now Playing: #{value}"
 
-				command = "#{pathText} #{hashvalue}"
+				command = "#{pathText} #{value}"
 				Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
 					stderr.each_line do |line| 
 						# common error
