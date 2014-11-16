@@ -1,5 +1,3 @@
-#!/usr/bin/ruby
-
 module BiliWeb
 
 	require 'open-uri'

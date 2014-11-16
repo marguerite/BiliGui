@@ -3,8 +3,9 @@
 * BiliUrl and Bangou (avXXXXXX) mix paste support
 * Playlist now has its own dir
 * add demo playlist "demo/demo.m3u8" for developers
+* first attempt to provide Web feature
 0.0.7
-* Asynchronously play (Qt::Process), GUI won't freeze anymore!
+* asynchronously play (Qt::Process), GUI won't freeze anymore!
 * fix issue#2, disable playButton when there's something playing
 * fix: BiliPlaylist::BiliSave can't override old file
 * bangou (avXXXXXX) paste support

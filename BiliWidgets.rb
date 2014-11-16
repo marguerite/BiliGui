@@ -210,7 +210,6 @@ class BiliGui < Qt::MainWindow
 
 		urlText = @urlArea.toPlainText()
 		urlHash = BiliGuiPlaylist.new(urlText).hash 
-		p urlHash
 		pathText = @bilidanPath.text()
 
 		# validate bilidan.py path
@@ -230,7 +229,7 @@ class BiliGui < Qt::MainWindow
 				p "Now Playing: #{value}"
 
 				command = "#{pathText} #{value}"
-				#@thread.start(command)
+				@thread.start(command)
 				 
 			end
 
