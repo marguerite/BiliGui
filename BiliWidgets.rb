@@ -2,6 +2,7 @@ require 'Qt'
 require 'qtwebkit'
 require_relative 'BiliConfig'
 require_relative 'BiliPlaylist'
+require_relative 'BiliWeb'
 
 class BiliGuiConfig
 
@@ -46,7 +47,23 @@ class BiliGuiPlaylist
 	
 end
 
-class BiliGui < Qt::Widget
+class BiliGuiWeb
+
+	include BiliWeb
+
+        def initialize(url="http://bilibili.tv")
+                @url = url
+        end
+
+        def get
+                BiliFetch.new(@url).get
+                BiliFetch.new(@url).clean
+                BiliFetch.new(@url).parse_index
+        end
+
+end
+
+class BiliGui < Qt::MainWindow
 
 	slots 'clear()'
 	slots 'bilidanChoose()'
@@ -62,12 +79,17 @@ class BiliGui < Qt::Widget
 	Height = 400
 	@@configw = BiliGuiConfig.new
 	@@config = @@configw.load
+	@@lev1 = BiliGuiWeb.new.get
 
 	def initialize
 		super
 		
 		setWindowTitle "BiliGui"
 		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
+		setStyleSheet("background-color: #171a21; color: #b8b6b4")
+
+		@central = Qt::Widget.new self
+		setCentralWidget @central
 
 		init_ui
 
@@ -103,7 +125,7 @@ class BiliGui < Qt::Widget
 		@messageLabel = Qt::Label.new
                 @messageLabel.setStyleSheet("color: #ff0000;")
 
-		grid_biliTabs = Qt::GridLayout.new self
+		grid_biliTabs = Qt::GridLayout.new(@central)
 		grid_biliTabs.addWidget biliTabs, 0, 0, 1, 1
 		grid_biliTabs.addWidget @messageLabel, 1, 0, 1, 1
 		grid_biliTabs.setColumnStretch 0, 0
@@ -145,18 +167,27 @@ class BiliGui < Qt::Widget
 		connect ctlLoadButton, SIGNAL('clicked()'), self, SLOT('biliLoad()')
 		connect ctlSaveButton, SIGNAL('clicked()'), self, SLOT('biliSave()')
 
+		# Web Tab
+		menu = Qt::MenuBar.new(webTab)
+		@@lev1.each do |array|
+			name = array[1].gsub(/\/video\//,'').gsub(/\.html/,'')
+			name = Qt::Menu.new "#{array[0]}"
+			menu.addMenu name
+		end
+
 		# Settings Tab
 		grid_Settings = Qt::GridLayout.new settingsTab
 		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
                 @bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], settingsTab
                 bilidanButton = Qt::PushButton.new 'Choose', settingsTab
-
-		logo = Qt::Label.new "BiliGui is a graphical frontend for Bilidan, developed by marguerite", settingsTab
+		desc = Qt::Label.new "BiliGui is a graphical frontend for Bilibili, developed by marguerite", settingsTab
+		#logo = Qt::Pixmap.new("bilibili.svgz")
+		#desc.setPixmap(logo)
 
 		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
 		grid_Settings.addWidget @bilidanPath, 0, 1, 1, 1
 		grid_Settings.addWidget bilidanButton, 0, 2, 1, 1
-		grid_Settings.addWidget logo, 1, 1, 1, 1
+		grid_Settings.addWidget desc, 1, 1, 1, 1
 		grid_Settings.setColumnStretch 0, 0
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')

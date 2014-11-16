@@ -5,18 +5,21 @@ module BiliWeb
 	require 'open-uri'
 	require_relative 'BiliConfig'
 
+	$cachePath = File.join($configPath, 'cache')
+
+	Dir.mkdir($cachePath) unless Dir.exists?($cachePath)
+
 	class BiliFetch
 		
 		include BiliConfig
 		include BiliFile
 
-		def initialize(url)
+		@@index = "bilibili.tv.html"		
+		@@indexfile = File.join($cachePath,@@index)
+
+		def initialize(url="http://bilibili.tv")
 			@url = url	
-			@cachePath = File.join($configPath,"cache")
-			unless Dir.exists?(@cachePath) then
-				Dir.mkdir(@cachePath)
-			end
-			@filename = @cachePath + "/" + @url.gsub(/http:\/\//,"") + ".html"
+			@filename = $cachePath + "/" + @url.gsub(/http:\/\//,"") + ".html"
 		end
 
 		def get
@@ -28,7 +31,7 @@ module BiliWeb
 
 		def clean(filename="#{@filename}")
 
-			if filename.index("bilibili.tv.html") then
+			if filename.index(@@index) then
 
 				biliMove(filename,"line.index('/video/') && ! line.index('av271')")
 
@@ -41,13 +44,26 @@ module BiliWeb
 		def format
 		end
 
-		def indexLevels
-			indexFile = @cachePath + "/bilibili.tv.html"
-			indexLevel1 = indexFile + ".level1"
-			indexLevel2 = indexFile + ".level2"			
+		def parse_index
 
-			biliMove(indexFile,indexLevel1,"line.index('i-link')")
-			biliMove(indexFile,indexLevel2,"! line.index('i-link')")
+			hash1 = {}
+			hash2 = {}
+			lev1 = @@indexfile + ".l1"
+			lev2 = @@indexfile + ".l2"			
+
+			biliMove(@@indexfile,lev1,"line.index('i-link')")
+
+			# parse level 1 pair
+			open(lev1) do |f|
+				f.each_line do |line|
+					line.chomp!
+					key = line.gsub(/^.*<em>/,'').gsub(/<\/em.*$/,'')
+					value = line.gsub(/^.*href=\"/,'').gsub(/\"><em.*$/,'')
+					hash1[key] = value
+				end
+			end
+
+			return hash1
 			
 		end
 
@@ -56,20 +72,4 @@ module BiliWeb
 end
 
 # Test code below
-
-#class Test
-#	include BiliWeb
-
-#	def initialize(url)
-		#@url = url
-#	end
-
-#	def get
-#		BiliFetch.new(@url).get
-#		BiliFetch.new(@url).clean
-#		BiliFetch.new(@url).indexLevels
-#	end
-
-#end
-
-#Test.new("http://bilibili.tv").get
+#Test.new("http://www.bilibili.com/video/av1718394/").get
