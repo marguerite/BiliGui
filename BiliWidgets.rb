@@ -6,16 +6,16 @@ require_relative 'BiliPlaylist'
 class BiliGuiConfig
 
         include BiliConfig
-        @@config = Biliconf.new
+        @@config = BiliConf.new
 
         def put(key,value)
                 confKey = key
                 confValue = value
-                @@config.writeNewConfig(confKey,confValue)
+                @@config.write(confKey,confValue)
         end
 
 	def load
-		@@config.loadConfigs()
+		@@config.load
 	end
 
 end
@@ -64,8 +64,8 @@ class BiliGui < Qt::Widget
 		super
 		
 		setWindowTitle "BiliGui"
-
 		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
+		#setStyleSheet "QWidget {color: #ff3d6a;}"
 
 		init_ui
 
@@ -98,8 +98,12 @@ class BiliGui < Qt::Widget
 		biliTabs.addTab webTab, "Bilibili.tv"
 		biliTabs.addTab settingsTab, "BiliGui Settings"
 
+		@messageLabel = Qt::Label.new ""
+                @messageLabel.setStyleSheet("color: #ff0000;")
+
 		grid_biliTabs = Qt::GridLayout.new self
 		grid_biliTabs.addWidget biliTabs, 0, 0, 1, 1
+		grid_biliTabs.addWidget @messageLabel, 1, 0, 1, 1
 		grid_biliTabs.setColumnStretch 0, 0
 
 		# Playlist Tab		
@@ -108,8 +112,6 @@ class BiliGui < Qt::Widget
 		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", playlistTab
 		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
 		@urlArea = Qt::TextEdit.new playlistTab
-		@messageLabel = Qt::Label.new "", playlistTab
-		@messageLabel.setStyleSheet("color: #ff0000;")
 		ctlPanel = Qt::Widget.new playlistTab
 		okButton = Qt::PushButton.new 'Play', playlistTab
 		clearButton = Qt::PushButton.new 'Clear', playlistTab
@@ -118,7 +120,6 @@ class BiliGui < Qt::Widget
 		grid_Playlist.addWidget biliWebButton, 0, 1, 1, 1
 		grid_Playlist.addWidget @urlArea, 1, 0, 1, 4
 		grid_Playlist.addWidget ctlPanel, 1, 4, 1, 1
-		grid_Playlist.addWidget @messageLabel, 2, 0, 1, 2
 		grid_Playlist.addWidget okButton, 2, 2, 1, 1
 		grid_Playlist.addWidget clearButton, 2, 3, 1, 1
 		grid_Playlist.setColumnStretch 0, 0
@@ -186,12 +187,12 @@ class BiliGui < Qt::Widget
 				command = "#{pathText} #{hashvalue}"
 				Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
 					stderr.each_line do |line| 
-						# 99% is a common error can safely ignore
-						unless line.index("99%") then
+						# common error
+						unless line.index("Cache") then
 							@messageLabel.setText(line)
 						end
 
-						stdout.each_line {|line| p line}
+						#stdout.each_line {|line| p line}
 
 					end
 
@@ -235,7 +236,12 @@ class BiliGui < Qt::Widget
 	def biliLoad
 		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}", "Playlist file (*.m3u8)")
 		unless playlist == nil then
-			BiliGuiPlaylist.new.load(playlist)
+			hash = BiliGuiPlaylist.new.load(playlist)
+			str = ""
+			hash.each_value do |value|
+				str += value + "\n"
+			end
+			@urlArea.setText(str)
 		end
 	end
 	

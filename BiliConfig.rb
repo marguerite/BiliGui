@@ -1,6 +1,10 @@
 module	BiliConfig
 
-	class Biliconf
+	require_relative 'BiliFile'
+
+	class BiliConf
+
+		include BiliFile
 
 		$userHome = `echo $HOME`.gsub(/\n/,"")
 		$configPath = File.join($userHome,".config/BiliGui")
@@ -19,8 +23,7 @@ module	BiliConfig
 			@configEntries = {}
 
 			unless File.exists?(@config) then
-				io = File.open(@config, "w")
-				io.close
+				biliTouch(@config)
 			else
 				io = File.open(@config, "r")
 				io.each_line do |line|
@@ -34,28 +37,14 @@ module	BiliConfig
 
 		end
 
-		def writeNewConfig(key, value)
+		def write(key, value)
 			configKey = key
 			configValue = value
 
 			# if Key exists, then we should delete
-			if @configEntries.key?(configKey) then
-
-				require 'fileutils'
-
-				tmpfile = @config + ".tmp"
-				oldfile = @config + ".old"
-
-				open(@config, 'r') do |f0|
-					open(tmpfile, 'w') do |f1|
-						f0.each_line do |line|
-							f1.write(line) unless line.index(configKey)
-						end
-					end
-				end
-				
-				FileUtils.mv @config, oldfile
-				FileUtils.mv tmpfile, @config
+			if @configEntries.key?(configKey) then	
+								
+				billMove(@config,"! line.index(configKey)")
 				
 			end
 
@@ -64,7 +53,7 @@ module	BiliConfig
 			io.close
 		end
 
-		def loadConfigs
+		def load
 			return @configEntries
 		end
 	

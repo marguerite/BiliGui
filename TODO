@@ -1,8 +1,8 @@
 * let error message fade out
 * autoload playlists
-* capture more useful informations from console output
-* more error detecting
-* Bangou (avXXXX) paste support
+* capture more useful informations from console output (to fill BiliPlaylist metadata)
+* more error detection (use raise maybe)
+* Bangou (avXXXX) paste support (use "\n",",",";" to separate)
 * custom look and feel
 * play history
 

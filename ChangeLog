@@ -1,3 +1,8 @@
+0.0.6
+* fix: forgot to have BiliPlaylist::BiliLoad functional
+* initialize BiliWeb module, handling communication w/ bilibili.tv
+* split common file functions to BiliFile module
+* logo: add drop shadow
 0.0.5
 * switch to Tab layout for future features
 * load/save bilibili playlist file.

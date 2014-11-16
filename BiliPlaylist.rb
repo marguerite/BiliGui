@@ -6,10 +6,10 @@ module BiliPlaylist
 			@videos = videos
 			@videosHash = {}
 
-			videosSplit
+			split
 		end
 
-		def videosSplit
+		def split
 
 			unless @videos.empty? then
 
@@ -50,9 +50,9 @@ module BiliPlaylist
 			old_playlist = playlist + ".old"
 
 			if File.exist?(playlist) then
-				FileUtils.mv playlist, old_playlist
+				mv playlist, old_playlist
 			else
-				io = File.open(playlist,"w")
+				io = open(playlist,"w")
 				io.puts "#EXTM3U"
 
 				@videosHash.to_a.each do |video|
@@ -66,7 +66,7 @@ module BiliPlaylist
 
 		def load(playlist="")
 
-			playlistHash = {}
+			hash = {}
 
 			default_playlist = "#{$configPath}/biliplaylist.m3u8"
 
@@ -79,9 +79,9 @@ module BiliPlaylist
 				p "[ERR] No playlist available!"
 			else
 
-				io = File.open(playlist, 'r')
+				io = open(playlist, 'r')
 
-				validArray = []
+				array = []
 				i = 0
 
 				io.each_line do |line|
@@ -97,18 +97,22 @@ module BiliPlaylist
 					unless line.index("bilibili") then
 						p "#{line} doesn't seem to be a Bilibili URL!"
 					else
-						p line
-						validArray[i] = line
+						value = line
+						key = "av" + line.gsub(/^.*\/av/,"").gsub(/\//,"")
+						hash[key] = value
+						array[i] = line
 					end
 
 				end
 
-				if validArray.empty? then
+				if array.empty? then
 					p "This playlist has no URL we support!"
 				end
 
 				io.close
 			end
+
+			return hash
 
 		end
 
