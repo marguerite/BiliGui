@@ -23,11 +23,9 @@ module BiliWeb
 		end
 
 		def get
-			thr = Thread.new {
-				content = open(@url).read
-				io = File.open(@filename, "w")
-				io.puts(content)
-				io.close }
+			content = open(@url).read
+			io = File.open(@filename, "w")
+			io.puts(content)
 			
 			clean	
 		end

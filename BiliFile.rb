@@ -4,8 +4,6 @@ module BiliFile
 
 	def biliMove(file, newfile=file, condition)
 
-		Thread.new {
-
 		tmp = file + ".tmp"
 
 		open(file, 'r') do |f0|
@@ -44,8 +42,6 @@ module BiliFile
 		end
 
 		FileUtils.mv tmp, newfile
-
-		}
 		
 	end
 
