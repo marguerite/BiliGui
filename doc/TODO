@@ -13,6 +13,9 @@
 ** and autoload in init_ui
 ** simulate "history" function, can also load "BiliPlaylist.history"
 
+* thread safe!
+* handle exceptions
+
 future:
 
 * download videos

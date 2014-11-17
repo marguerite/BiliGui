@@ -83,7 +83,7 @@ class BiliGui < Qt::MainWindow
 		super
 		
 		setWindowTitle "BiliGui"
-		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
+		setWindowIcon(Qt::Icon.new("data/bilibili.svgz"))
 
 		@central = Qt::Widget.new self
 		@central.setObjectName("centralwidget")
@@ -178,14 +178,10 @@ class BiliGui < Qt::MainWindow
 		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
                 @bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], settingsTab
                 bilidanButton = Qt::PushButton.new 'Choose', settingsTab
-		desc = Qt::Label.new "BiliGui is a graphical frontend for Bilibili, developed by marguerite", settingsTab
-		#logo = Qt::Pixmap.new("bilibili.svgz")
-		#desc.setPixmap(logo)
 
 		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
 		grid_Settings.addWidget @bilidanPath, 0, 1, 1, 1
 		grid_Settings.addWidget bilidanButton, 0, 2, 1, 1
-		grid_Settings.addWidget desc, 1, 1, 1, 1
 		grid_Settings.setColumnStretch 0, 0
 
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')

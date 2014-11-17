@@ -1,4 +1,4 @@
-![BiliGui Logo](https://raw.githubusercontent.com/marguerite/BiliGui/master/bilibili.png)
+![BiliGui Logo](https://raw.githubusercontent.com/marguerite/BiliGui/master/data/bilibili.png)
 
 ## BiliGui
 
@@ -8,7 +8,7 @@ It's written in `ruby` + `Qt` and highly modular, eg: using [BiliDan](https://gi
 as player backend (further callback `mpv`), [Biligrab](https://github.com/cnbeining/Biligrab) as download module
 and a lot more.
 
-![BiliGui Screenshot](https://raw.githubusercontent.com/marguerite/BiliGui/master/screenshot.png)
+![BiliGui Screenshot](https://raw.githubusercontent.com/marguerite/BiliGui/master/data/screenshot.png)
 
 ### Features
 
