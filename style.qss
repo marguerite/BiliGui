@@ -1,0 +1,3 @@
+QWidget#centralwidget { background: url(2014-hw.jpg) top right no-repeat }
+QLabel, QTabBar::tab, QMenuBar::item { color: white }
+QMenuBar { background: #f489ad }

@@ -10,9 +10,7 @@ class BiliGuiConfig
         @@config = BiliConf.new
 
         def put(key,value)
-                confKey = key
-                confValue = value
-                @@config.write(confKey,confValue)
+                @@config.write(key,value)
         end
 
 	def load
@@ -76,7 +74,7 @@ class BiliGui < Qt::MainWindow
 	slots 'biliLoad()'
 
 	Width = 800
-	Height = 400
+	Height = 550
 	@@configw = BiliGuiConfig.new
 	@@config = @@configw.load
 	@@lev1 = BiliGuiWeb.new.get
@@ -86,9 +84,9 @@ class BiliGui < Qt::MainWindow
 		
 		setWindowTitle "BiliGui"
 		setWindowIcon(Qt::Icon.new("bilibili.svgz"))
-		setStyleSheet("background-color: #171a21; color: #b8b6b4")
 
 		@central = Qt::Widget.new self
+		@central.setObjectName("centralwidget")
 		setCentralWidget @central
 
 		init_ui
