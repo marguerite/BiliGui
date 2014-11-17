@@ -114,7 +114,6 @@ class BiliGui < Qt::MainWindow
 		# Web Tab
 		menu = Qt::MenuBar.new(webTab)
 		lev1 = BiliParser.new.parse
-		p lev1
 		lev1.each do |array|
 			name = array[1].gsub(/\/video\//,'').gsub(/\.html/,'')
 			name = Qt::Menu.new "#{array[0]}"

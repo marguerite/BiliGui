@@ -1,3 +1,7 @@
+0.0.9
+* make it themeable (external stylesheet .qss)
+* clean module usage, don't need to create wrapper classes
+* multithread Url fetch in BiliWeb
 0.0.8
 * fix: BiliSave will remove the Playlist!
 * BiliUrl and Bangou (avXXXXXX) mix paste support

@@ -15,29 +15,49 @@ module BiliWeb
 		@@index = "bilibili.tv.html"		
 		@@indexfile = File.join($cachePath,@@index)
 
-		def initialize(url="http://bilibili.tv")
-			@url = url	
-			@filename = $cachePath + "/" + @url.gsub(/http:\/\//,"") + ".html"
+		def initialize(array=["http://bilibili.tv"])
+			
+			@filename = {}
+			array.each do |url|
+				filename = $cachePath + "/" + url.gsub(/http:\/\//,"") + ".html"
+				@filename[filename] = url
+			end
+
+			@pool = Queue.new
+
 			get
 
 		end
 
 		def get
-			content = open(@url).read
-			io = File.open(@filename, "w")
-			io.puts(content)
+
+			@filename.each do |array|
+				Thread.new {
+					content = open(array[1]).read
+					io = File.open(array[0], "w")
+					io.puts(content)
+					io.close
+					@pool << array[0]
+				}
+			end
 			
 			clean	
 		end
 
 		def clean
+
+			@filename.size.times do
+
+				Thread.new {
+					file = @pool.pop
 	
-			if @filename.index(@@index) then
+					if file.index(@@index) then
+						biliMove(file,"line.index('/video/') && ! line.index('av271')")
+					else
+						p "[WARN] Don't know what to do!"
+					end
+				}
 
-				biliMove(@filename,"line.index('/video/') && ! line.index('av271')")
-
-			else
-					p "[WARN] Don't know what to do!"
 			end
 
 		end
@@ -45,9 +65,7 @@ module BiliWeb
 		def parse
 
 			hash1 = {}
-			hash2 = {}
-			lev1 = @@indexfile + ".l1"
-			lev2 = @@indexfile + ".l2"			
+			lev1 = @@indexfile + ".l1"			
 
 			biliMove(@@indexfile,lev1,"line.index('i-link')")
 
