@@ -32,9 +32,9 @@ module	BiliConfig
 				io = File.open(@config, "r")
 				io.each_line do |line|
 					line.chomp!
-					configKey = line.gsub(/=.*/,"")
-					configValue = line.gsub(/.*=/,"")
-					@configEntries[configKey] = configValue
+					key = line.gsub(/=.*/,"")
+					value = line.gsub(/.*=/,"")
+					@configEntries[key] = value
 				end
 				io.close
 			end
@@ -42,18 +42,16 @@ module	BiliConfig
 		end
 
 		def write(key, value)
-			configKey = key
-			configValue = value
 
 			# if Key exists, then we should delete
-			if @configEntries.key?(configKey) then	
+			if @configEntries.key?(key) then	
 								
-				billMove(@config,"! line.index(configKey)")
+				billMove(@config,"! line.index(key)")
 				
 			end
 
 			io = File.open(@config, "a")
-			io.puts("#{configKey}=#{configValue}")
+			io.puts("#{key}=#{value}")
 			io.close
 		end
 

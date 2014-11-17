@@ -7,7 +7,7 @@ module BiliWeb
 
 	Dir.mkdir($cachePath) unless Dir.exists?($cachePath)
 
-	class BiliFetch
+	class BiliParser
 		
 		include BiliConfig
 		include BiliFile
@@ -18,33 +18,33 @@ module BiliWeb
 		def initialize(url="http://bilibili.tv")
 			@url = url	
 			@filename = $cachePath + "/" + @url.gsub(/http:\/\//,"") + ".html"
+			get
+
 		end
 
 		def get
-			Thread.new {
+			thr = Thread.new {
 				content = open(@url).read
 				io = File.open(@filename, "w")
 				io.puts(content)
-				io.close
-			}
+				io.close }
+			
+			clean	
 		end
 
-		def clean(filename="#{@filename}")
+		def clean
+	
+			if @filename.index(@@index) then
 
-			if filename.index(@@index) then
-
-				biliMove(filename,"line.index('/video/') && ! line.index('av271')")
+				biliMove(@filename,"line.index('/video/') && ! line.index('av271')")
 
 			else
-				p "[WARN] Don't know what to do!"
+					p "[WARN] Don't know what to do!"
 			end
 
 		end
 
-		def format
-		end
-
-		def parse_index
+		def parse
 
 			hash1 = {}
 			hash2 = {}
@@ -64,7 +64,7 @@ module BiliWeb
 			end
 
 			return hash1
-			
+
 		end
 
 	end

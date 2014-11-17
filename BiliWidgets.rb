@@ -4,64 +4,11 @@ require_relative 'BiliConfig'
 require_relative 'BiliPlaylist'
 require_relative 'BiliWeb'
 
-class BiliGuiConfig
-
-        include BiliConfig
-        @@config = BiliConf.new
-
-        def put(key,value)
-                @@config.write(key,value)
-        end
-
-	def load
-		@@config.load
-	end
-
-end
-
-class BiliGuiPlaylist
-
-	include BiliPlaylist
-
-	def initialize(videoURLs="")
-
-		@videos = videoURLs
-
-		@videosHash = BiliPlaylist.new(@videos)
-
-	end
-
-	def hash
-		return @videosHash.hash
-	end
-
-	def save(filename="")
-		@videosHash.save(filename)
-	end
-
-	def load(playlist="")
-		BiliPlaylist.new.load(playlist)
-	end
-	
-end
-
-class BiliGuiWeb
-
-	include BiliWeb
-
-        def initialize(url="http://bilibili.tv")
-                @url = url
-        end
-
-        def get
-                BiliFetch.new(@url).get
-                BiliFetch.new(@url).clean
-                BiliFetch.new(@url).parse_index
-        end
-
-end
-
 class BiliGui < Qt::MainWindow
+
+	include BiliConfig
+	include BiliPlaylist
+	include BiliWeb
 
 	slots 'clear()'
 	slots 'bilidanChoose()'
@@ -75,9 +22,8 @@ class BiliGui < Qt::MainWindow
 
 	Width = 800
 	Height = 550
-	@@configw = BiliGuiConfig.new
+	@@configw = BiliConf.new
 	@@config = @@configw.load
-	@@lev1 = BiliGuiWeb.new.get
 
 	def initialize
 		super
@@ -167,7 +113,9 @@ class BiliGui < Qt::MainWindow
 
 		# Web Tab
 		menu = Qt::MenuBar.new(webTab)
-		@@lev1.each do |array|
+		lev1 = BiliParser.new.parse
+		p lev1
+		lev1.each do |array|
 			name = array[1].gsub(/\/video\//,'').gsub(/\.html/,'')
 			name = Qt::Menu.new "#{array[0]}"
 			menu.addMenu name
@@ -203,7 +151,7 @@ class BiliGui < Qt::MainWindow
 		require 'open3'
 
 		urlText = @urlArea.toPlainText()
-		urlHash = BiliGuiPlaylist.new(urlText).hash 
+		urlHash = BiliPlaylist.new(urlText).hash 
 		pathText = @bilidanPath.text()
 
 		# validate bilidan.py path
@@ -276,7 +224,7 @@ class BiliGui < Qt::MainWindow
 	def biliLoad
 		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
 		unless playlist == nil then
-			hash = BiliGuiPlaylist.new.load(playlist)
+			hash = BiliPlaylist.new.load(playlist)
 			str = ""
 			hash.each_value do |value|
 				str += value + "\n"
@@ -291,7 +239,7 @@ class BiliGui < Qt::MainWindow
 		else
 			filename = Qt::FileDialog.getSaveFileName(self, "Please choose save location", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
 			unless filename == nil then
-				playlist = BiliGuiPlaylist.new(@urlArea.toPlainText())
+				playlist = BiliPlaylist.new(@urlArea.toPlainText())
 				playlist.save(filename)
 			end
 		end
