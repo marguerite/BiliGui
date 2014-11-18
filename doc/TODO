@@ -6,7 +6,6 @@
 * play history
 * query url to get title & author
 * BiliDaemon.rb to run background tasks
-** autosave config
 * Playlist merge
 ** find all saved playlists
 ** merge into a temp big one

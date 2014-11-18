@@ -12,6 +12,7 @@ class BiliGui < Qt::MainWindow
 
 	slots 'clear()'
 	slots 'bilidanChoose()'
+	slots 'bilidanAutoSave()'
 	slots 'bilidanPlay()'
 	slots 'bilidanLogOut()'
 	slots 'bilidanLogErr()'
@@ -131,6 +132,7 @@ class BiliGui < Qt::MainWindow
 		grid_Settings.addWidget bilidanButton, 0, 2, 1, 1
 		grid_Settings.setColumnStretch 0, 0
 
+		connect @bilidanPath, SIGNAL('textChanged(const QString)'), self, SLOT('bilidanAutoSave()')
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
 
 		# player thread
@@ -210,6 +212,13 @@ class BiliGui < Qt::MainWindow
 				@messageLabel.setText("[WARN] You didn't choose bilidan.py!")
 			end
 		end
+	end
+
+	def bilidanAutoSave
+
+		p @bilidanPath.text
+		@@configw.put("BilidanPath", @bilidanPath.text)
+
 	end
 
 	def biliWeb

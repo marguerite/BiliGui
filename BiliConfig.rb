@@ -41,12 +41,12 @@ module	BiliConfig
 
 		end
 
-		def write(key, value)
+		def put(key, value)
 
 			# if Key exists, then we should delete
 			if @configEntries.key?(key) then	
 								
-				billMove(@config,"! line.index(key)")
+				biliMove(@config,"! line.index('" + key + "')")
 				
 			end
 
