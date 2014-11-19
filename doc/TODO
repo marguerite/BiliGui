@@ -1,18 +1,6 @@
 * let error message fade out
-* autoload playlists
 * capture more useful informations from console output (to fill BiliPlaylist metadata)
-* more error detection (use raise maybe)
-* custom look and feel
-* play history
 * query url to get title & author
-* BiliDaemon.rb to run background tasks
-* Playlist merge
-** find all saved playlists
-** merge into a temp big one
-** and autoload in init_ui
-** simulate "history" function, can also load "BiliPlaylist.history"
-
-* thread safe!
 * handle exceptions
 
 future:

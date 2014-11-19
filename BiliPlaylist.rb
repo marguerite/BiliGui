@@ -1,10 +1,15 @@
 module BiliPlaylist
 
+	require_relative 'BiliConfig'
+
 	class BiliPlaylist
 
 		def initialize(videos="")
 			@videos = videos
 			@hash = {}
+
+                        @historyfile = File.join($configPath,"biligui.history")
+                        @lastfile = File.join($configPath,"biligui.last")
 
 			split
 		end
@@ -131,6 +136,61 @@ module BiliPlaylist
 			end
 
 			return hash
+
+		end
+
+		def history
+
+			io = open(@lastfile, 'w')
+			@hash.each_value { |item| io.puts item }
+			io.close
+
+			open(@lastfile,'r') do |f|
+				open(@historyfile, 'a') do |f1|
+					f.each_line do |line|
+						f1.puts line
+					end
+				end
+			end
+
+			duplicate([@lastfile,@historyfile])
+
+		end
+
+		def duplicate(files)
+
+			files.each do |file|
+				array = []
+				i = 0
+
+				open(file,'r') do |f|
+					f.each_line do |line|
+						line.chomp!
+						array[i] = line
+						i+=1
+					end
+				end
+
+				new = array.uniq
+
+				io = open(file, 'w')
+				new.each {|value| io.puts value}
+				io.close
+			end
+		end
+
+		def last
+
+			str = ""
+			
+			open(@lastfile,'r') do |f|
+				f.each_line do |line|
+					str += line
+				end
+			end
+
+			p str
+			return str
 
 		end
 

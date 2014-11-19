@@ -1,6 +1,9 @@
 0.0.10
 * autosave bilidan path in input area
 * regression: can not set biligui config
+* autosave paste history & last pasted
+* load last pasted URLs by default
+* fix: don't use class variable, use local variable instead
 0.0.9
 * make it themeable (external stylesheet .qss)
 * clean module usage, don't need to create wrapper classes

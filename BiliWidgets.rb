@@ -20,11 +20,10 @@ class BiliGui < Qt::MainWindow
 	slots 'biliWeb()'
 	slots 'biliSave()'
 	slots 'biliLoad()'
+	slots 'biliHistory()'
 
 	Width = 800
 	Height = 550
-	@@configw = BiliConf.new
-	@@config = @@configw.load
 
 	def initialize
 		super
@@ -35,6 +34,10 @@ class BiliGui < Qt::MainWindow
 		@central = Qt::Widget.new self
 		@central.setObjectName("centralwidget")
 		setCentralWidget @central
+
+		@configw = BiliConf.new
+		@config = @configw.load
+		@last = BiliPlaylist.new.last
 
 		init_ui
 
@@ -81,6 +84,7 @@ class BiliGui < Qt::MainWindow
 		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", playlistTab
 		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
 		@urlArea = Qt::TextEdit.new playlistTab
+		@urlArea.setText(@last)
 		ctlPanel = Qt::Widget.new playlistTab
 		@playButton = Qt::PushButton.new 'Play', playlistTab
 		clearButton = Qt::PushButton.new 'Clear', playlistTab
@@ -95,6 +99,7 @@ class BiliGui < Qt::MainWindow
 
 
 		connect biliWebButton, SIGNAL('clicked()'), self, SLOT('biliWeb()')
+		connect @urlArea, SIGNAL('textChanged()'), self, SLOT('biliHistory()')
                 connect @playButton, SIGNAL('clicked()'), self, SLOT('bilidanPlay()')
                 connect clearButton, SIGNAL('clicked()'), self, SLOT('clear()')
 
@@ -124,7 +129,7 @@ class BiliGui < Qt::MainWindow
 		# Settings Tab
 		grid_Settings = Qt::GridLayout.new settingsTab
 		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
-                @bilidanPath = Qt::LineEdit.new @@config["BilidanPath"], settingsTab
+                @bilidanPath = Qt::LineEdit.new @config["BilidanPath"], settingsTab
                 bilidanButton = Qt::PushButton.new 'Choose', settingsTab
 
 		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
@@ -207,7 +212,6 @@ class BiliGui < Qt::MainWindow
 		unless bilidanBin == nil then
 			if bilidanBin.index("bilidan.py") then
 				@bilidanPath.setText(bilidanBin)
-				@@configw.put("BilidanPath", bilidanBin)
 			else
 				@messageLabel.setText("[WARN] You didn't choose bilidan.py!")
 			end
@@ -216,8 +220,10 @@ class BiliGui < Qt::MainWindow
 
 	def bilidanAutoSave
 
-		p @bilidanPath.text
-		@@configw.put("BilidanPath", @bilidanPath.text)
+		# avoid waste resource
+		if @bilidanPath.text.index("bilidan.py") then
+			@configw.put("BilidanPath", @bilidanPath.text)
+		end	
 
 	end
 
@@ -251,6 +257,14 @@ class BiliGui < Qt::MainWindow
 				playlist.save(filename)
 			end
 		end
+	end
+
+	def biliHistory
+
+		if @urlArea.toPlainText.index("av") then
+			BiliPlaylist.new(@urlArea.toPlainText).history
+		end
+
 	end
 
 end

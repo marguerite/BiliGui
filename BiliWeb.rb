@@ -12,9 +12,6 @@ module BiliWeb
 		include BiliConfig
 		include BiliFile
 
-		@@index = "bilibili.tv.html"		
-		@@indexfile = File.join($cachePath,@@index)
-
 		def initialize(array=["http://bilibili.tv"])
 			
 			@filename = {}
@@ -24,6 +21,9 @@ module BiliWeb
 			end
 
 			@pool = Queue.new
+
+                	@index = "bilibili.tv.html"
+                	@indexfile = File.join($cachePath,@index)
 
 			get
 
@@ -51,7 +51,7 @@ module BiliWeb
 				Thread.new {
 					file = @pool.pop
 	
-					if file.index(@@index) then
+					if file.index(@index) then
 						biliMove(file,"line.index('/video/') && ! line.index('av271')")
 					else
 						p "[WARN] Don't know what to do!"
@@ -65,9 +65,9 @@ module BiliWeb
 		def parse
 
 			hash1 = {}
-			lev1 = @@indexfile + ".l1"			
+			lev1 = @indexfile + ".l1"			
 
-			biliMove(@@indexfile,lev1,"line.index('i-link')")
+			biliMove(@indexfile,lev1,"line.index('i-link')")
 
 			# parse level 1 pair
 			open(lev1) do |f|

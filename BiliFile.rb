@@ -6,8 +6,6 @@ module BiliFile
 
 		tmp = file + ".tmp"
 
-		p condition
-
 		open(file, 'r') do |f0|
 			open(tmp, 'w') do |f1|
 				f0.each_line do |line|
