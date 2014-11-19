@@ -19,13 +19,30 @@ You need ruby and `qtbindings` gem.
 If you have rvm, run
 
 	rvm install ruby-2.1.4
-	gem install qtbindings
+	gem install qtbindings (need libqt4-devel and libQtWebKit-devel installed)
+
+If you're using openSUSE, which is the best distribution ever, just add `devel:languages:ruby:extensions` repo
+and run:
+
+	sudo zypper in rubygem-qtbindings (ruby is already installed because of YaST installtion)
 
 #### Optional
 
 Place BiliGui.desktop anywhere that is easy to you.
 
 Remeber to edit the absolute paths in BiliGui.desktop
+
+***NOTE*** the "Exec=" field is important!
+
+If you're using `rvm`, you should keep it the way it is, which is:
+
+    rvm use 2.1.4 do /absolute/path/to/your/biligui.rb/installation
+
+If you're using system ruby and qtbindings gem, you should change it to:
+
+    /usr/bin/ruby /absolute/path/to/your/biligui.rb/installation
+
+Or the .desktop file will not run.
 
 ### License
 
