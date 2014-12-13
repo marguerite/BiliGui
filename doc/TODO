@@ -2,6 +2,8 @@
 * capture more useful informations from console output (to fill BiliPlaylist metadata)
 * query url to get title & author
 * handle exceptions
+* play history and last played
+* better use config system
 
 future:
 

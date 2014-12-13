@@ -33,7 +33,11 @@ module	BiliConfig
 				io.each_line do |line|
 					line.chomp!
 					key = line.gsub(/=.*/,"")
-					value = line.gsub(/.*=/,"")
+					if line.index("mpvflags") then
+						value = line.gsub(/mpvflags=/,"")
+					else
+						value = line.gsub(/.+=/,"")
+					end
 					@configEntries[key] = value
 				end
 				io.close

@@ -189,7 +189,6 @@ module BiliPlaylist
 				end
 			end
 
-			p str
 			return str
 
 		end

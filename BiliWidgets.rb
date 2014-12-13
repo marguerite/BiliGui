@@ -128,16 +128,29 @@ class BiliGui < Qt::MainWindow
 
 		# Settings Tab
 		grid_Settings = Qt::GridLayout.new settingsTab
+
 		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
                 @bilidanPath = Qt::LineEdit.new @config["BilidanPath"], settingsTab
                 bilidanButton = Qt::PushButton.new 'Choose', settingsTab
+		
+		bilidanMpvFlagsLabel = Qt::Label.new "mpv flags for bilidan:", settingsTab
+		@bilidanMpvFlags = Qt::LineEdit.new @config["mpvflags"], settingsTab
+
+		bilidanD2AFlagsLabel = Qt::Label.new "danmaku2ass flags for bilidan:", settingsTab
+		@bilidanD2AFlags = Qt::LineEdit.new @config["danmaku2assflags"], settingsTab
 
 		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
 		grid_Settings.addWidget @bilidanPath, 0, 1, 1, 1
 		grid_Settings.addWidget bilidanButton, 0, 2, 1, 1
+		grid_Settings.addWidget bilidanMpvFlagsLabel, 1, 0, 1, 1
+		grid_Settings.addWidget @bilidanMpvFlags, 1, 1, 1, 1
+		grid_Settings.addWidget bilidanD2AFlagsLabel, 2, 0, 1, 1
+		grid_Settings.addWidget @bilidanD2AFlags, 2, 1, 1, 1
 		grid_Settings.setColumnStretch 0, 0
 
 		connect @bilidanPath, SIGNAL('textChanged(const QString)'), self, SLOT('bilidanAutoSave()')
+		connect @bilidanMpvFlags, SIGNAL('textChanged(const QString)'), self, SLOT('bilidanAutoSave()')
+		connect @bilidanD2AFlags, SIGNAL('textChanged(const QString)'), self, SLOT('bilidanAutoSave()')
 		connect bilidanButton, SIGNAL('clicked()'), self, SLOT('bilidanChoose()')
 
 		# player thread
@@ -159,6 +172,9 @@ class BiliGui < Qt::MainWindow
 		urlText = @urlArea.toPlainText()
 		urlHash = BiliPlaylist.new(urlText).hash 
 		pathText = @bilidanPath.text()
+		mpvflagsText = "--mpvflags=\"" + @bilidanMpvFlags.text + "\""
+		d2aflagsText = "--d2aflags=\"" + @bilidanD2AFlags.text + "\""
+		parameter = "#{mpvflagsText} #{d2aflagsText}"
 
 		# validate bilidan.py path
 		unless ! pathText.empty? && File.exists?(pathText) then
@@ -176,7 +192,7 @@ class BiliGui < Qt::MainWindow
 			urlHash.each_value do |value|
 				p "Now Playing: #{value}"
 
-				command = "#{pathText} #{value}"
+				command = "#{pathText} #{parameter} #{value}"
 				@thread.start(command)
 				 
 			end
@@ -223,7 +239,15 @@ class BiliGui < Qt::MainWindow
 		# avoid waste resource
 		if @bilidanPath.text.index("bilidan.py") then
 			@configw.put("BilidanPath", @bilidanPath.text)
-		end	
+		end
+	
+		unless @bilidanMpvFlags.text.empty? then
+			@configw.put("mpvflags", @bilidanMpvFlags.text)
+		end
+
+		unless @bilidanD2AFlags.text.empty? then
+			@configw.put("danmaku2assflags", @bilidanD2AFlags.text)
+		end
 
 	end
 
