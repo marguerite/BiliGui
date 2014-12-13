@@ -1,3 +1,7 @@
+0.0.11
+* add support for bilidan parameters (some)
+* fix BiliGui.rb's shebang (rvm friendly)
+* i18n support
 0.0.10
 * autosave bilidan path in input area
 * regression: can not set biligui config

@@ -1,5 +1,6 @@
 module BiliPlaylist
 
+	require 'fileutils'
 	require_relative 'BiliConfig'
 
 	class BiliPlaylist
@@ -59,8 +60,6 @@ module BiliPlaylist
 		end
 
 		def save(filename="")
-
-			require 'fileutils'
 
 			playlist = filename
 

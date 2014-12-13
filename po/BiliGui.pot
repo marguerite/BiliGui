@@ -1,0 +1,115 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-12-14 01:38+0800\n"
+"PO-Revision-Date: 2014-12-14 01:38+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: ../BiliWidgets.rb:36
+msgid "BiliGui"
+msgstr ""
+
+#: ../BiliWidgets.rb:74
+msgid "BiliGui Playlist"
+msgstr ""
+
+#: ../BiliWidgets.rb:75
+msgid "BiliGui Settings"
+msgstr ""
+
+#: ../BiliWidgets.rb:76
+msgid "Bilibili.tv"
+msgstr ""
+
+#: ../BiliWidgets.rb:89
+msgid "Please paste Bilibili URL/bangou below"
+msgstr ""
+
+#: ../BiliWidgets.rb:90
+msgid "Visit bilibili.tv (experimental)"
+msgstr ""
+
+#: ../BiliWidgets.rb:94
+msgid "Play"
+msgstr ""
+
+#: ../BiliWidgets.rb:95
+msgid "Clear"
+msgstr ""
+
+#: ../BiliWidgets.rb:114
+msgid "Load"
+msgstr ""
+
+#: ../BiliWidgets.rb:115
+msgid "Save"
+msgstr ""
+
+#: ../BiliWidgets.rb:137
+msgid "Please enter your bilidan's path:"
+msgstr ""
+
+#: ../BiliWidgets.rb:139
+msgid "Choose"
+msgstr ""
+
+#: ../BiliWidgets.rb:141
+msgid "mpv flags for bilidan:"
+msgstr ""
+
+#: ../BiliWidgets.rb:144
+msgid "danmaku2ass flags for bilidan:"
+msgstr ""
+
+#: ../BiliWidgets.rb:188
+msgid "[ERR] you need to choose bilidan.py!"
+msgstr ""
+
+#: ../BiliWidgets.rb:197
+msgid "Now Playing: "
+msgstr ""
+
+#: ../BiliWidgets.rb:205
+msgid "[ERR] you have to paste at least one URL/bangou!"
+msgstr ""
+
+#: ../BiliWidgets.rb:231
+msgid "Please choose your bilidan.py"
+msgstr ""
+
+#: ../BiliWidgets.rb:231
+msgid "Python files (*.py)"
+msgstr ""
+
+#: ../BiliWidgets.rb:236
+msgid "[WARN] You didn't choose bilidan.py!"
+msgstr ""
+
+#: ../BiliWidgets.rb:267
+msgid "Please choose your playlist"
+msgstr ""
+
+#: ../BiliWidgets.rb:267 ../BiliWidgets.rb:282
+msgid "Playlist file (*.m3u8)"
+msgstr ""
+
+#: ../BiliWidgets.rb:280
+msgid "No video URL/bangou can be saved at all!"
+msgstr ""
+
+#: ../BiliWidgets.rb:282
+msgid "Please choose save location"
+msgstr ""

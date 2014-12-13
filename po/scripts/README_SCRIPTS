@@ -1,0 +1,5 @@
+1. run `update_pot.sh` to update pot
+2. run `merge.sh` to merge new items to existing po files
+3. translate
+4. run `sudo install.sh` to install
+5. run `sudo remove.sh` to uninstall (optional)

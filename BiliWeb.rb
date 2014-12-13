@@ -5,7 +5,7 @@ module BiliWeb
 
 	$cachePath = File.join($configPath, 'cache')
 
-	Dir.mkdir($cachePath) unless Dir.exists?($cachePath)
+	Dir.mkdir($cachePath) unless Dir.exist?($cachePath)
 
 	class BiliParser
 		

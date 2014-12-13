@@ -1,5 +1,7 @@
 require 'Qt'
 require 'qtwebkit'
+require 'open3'
+require 'gettext'
 require_relative 'BiliConfig'
 require_relative 'BiliPlaylist'
 require_relative 'BiliWeb'
@@ -9,6 +11,9 @@ class BiliGui < Qt::MainWindow
 	include BiliConfig
 	include BiliPlaylist
 	include BiliWeb
+
+	include GetText
+	bindtextdomain("BiliGui")
 
 	slots 'clear()'
 	slots 'bilidanChoose()'
@@ -28,7 +33,7 @@ class BiliGui < Qt::MainWindow
 	def initialize
 		super
 		
-		setWindowTitle "BiliGui"
+		setWindowTitle _("BiliGui")
 		setWindowIcon(Qt::Icon.new("data/bilibili.svgz"))
 
 		@central = Qt::Widget.new self
@@ -66,9 +71,9 @@ class BiliGui < Qt::MainWindow
 		webTab = Qt::Widget.new
 		settingsTab = Qt::Widget.new
 
-		biliTabs.addTab	playlistTab, "BiliGui Playlist"
-		biliTabs.addTab webTab, "Bilibili.tv"
-		biliTabs.addTab settingsTab, "BiliGui Settings"
+		biliTabs.addTab	playlistTab, _("BiliGui Playlist")
+		biliTabs.addTab settingsTab, _("BiliGui Settings")
+		biliTabs.addTab webTab, _("Bilibili.tv")
 
 		@messageLabel = Qt::Label.new
                 @messageLabel.setStyleSheet("color: #ff0000;")
@@ -81,13 +86,13 @@ class BiliGui < Qt::MainWindow
 		# Playlist Tab		
 		grid_Playlist = Qt::GridLayout.new playlistTab
 
-		biliUrlLabel = Qt::Label.new "Please paste Bilibili URL below", playlistTab
-		biliWebButton = Qt::PushButton.new 'Visit bilibili.tv (experimental)', playlistTab
+		biliUrlLabel = Qt::Label.new _("Please paste Bilibili URL/bangou below"), playlistTab
+		biliWebButton = Qt::PushButton.new _("Visit bilibili.tv (experimental)"), playlistTab
 		@urlArea = Qt::TextEdit.new playlistTab
 		@urlArea.setText(@last)
 		ctlPanel = Qt::Widget.new playlistTab
-		@playButton = Qt::PushButton.new 'Play', playlistTab
-		clearButton = Qt::PushButton.new 'Clear', playlistTab
+		@playButton = Qt::PushButton.new _("Play"), playlistTab
+		clearButton = Qt::PushButton.new _("Clear"), playlistTab
 
 		grid_Playlist.addWidget biliUrlLabel, 0, 0, 1, 1
 		grid_Playlist.addWidget biliWebButton, 0, 1, 1, 1
@@ -106,8 +111,8 @@ class BiliGui < Qt::MainWindow
 		## controlPanel layout
 		grid_ctlPanel = Qt::GridLayout.new ctlPanel
 
-		ctlLoadButton = Qt::PushButton.new 'Load', ctlPanel
-		ctlSaveButton = Qt::PushButton.new 'Save', ctlPanel
+		ctlLoadButton = Qt::PushButton.new _("Load"), ctlPanel
+		ctlSaveButton = Qt::PushButton.new _("Save"), ctlPanel
 		ctlBlank = Qt::Label.new ctlPanel
 
 		grid_ctlPanel.addWidget ctlLoadButton, 0, 0, 1, 1
@@ -129,14 +134,14 @@ class BiliGui < Qt::MainWindow
 		# Settings Tab
 		grid_Settings = Qt::GridLayout.new settingsTab
 
-		bilidanPathLabel = Qt::Label.new "Please enter your bilidan's path:", settingsTab
+		bilidanPathLabel = Qt::Label.new _("Please enter your bilidan's path:"), settingsTab
                 @bilidanPath = Qt::LineEdit.new @config["BilidanPath"], settingsTab
-                bilidanButton = Qt::PushButton.new 'Choose', settingsTab
+                bilidanButton = Qt::PushButton.new _("Choose"), settingsTab
 		
-		bilidanMpvFlagsLabel = Qt::Label.new "mpv flags for bilidan:", settingsTab
+		bilidanMpvFlagsLabel = Qt::Label.new _("mpv flags for bilidan:"), settingsTab
 		@bilidanMpvFlags = Qt::LineEdit.new @config["mpvflags"], settingsTab
 
-		bilidanD2AFlagsLabel = Qt::Label.new "danmaku2ass flags for bilidan:", settingsTab
+		bilidanD2AFlagsLabel = Qt::Label.new _("danmaku2ass flags for bilidan:"), settingsTab
 		@bilidanD2AFlags = Qt::LineEdit.new @config["danmaku2assflags"], settingsTab
 
 		grid_Settings.addWidget bilidanPathLabel, 0, 0, 1, 1
@@ -167,7 +172,6 @@ class BiliGui < Qt::MainWindow
 	end
 
 	def bilidanPlay
-		require 'open3'
 
 		urlText = @urlArea.toPlainText()
 		urlHash = BiliPlaylist.new(urlText).hash 
@@ -177,11 +181,11 @@ class BiliGui < Qt::MainWindow
 		parameter = "#{mpvflagsText} #{d2aflagsText}"
 
 		# validate bilidan.py path
-		unless ! pathText.empty? && File.exists?(pathText) then
-			if File.exists?('./bilidan.py')	then
+		unless ! pathText.empty? && File.exist?(pathText) then
+			if File.exist?('./bilidan.py')	then
 				pathText = "./bilidan.py"
 			else
-				error = "[ERR] you need to choose bilidan.py!"
+				error = _("[ERR] you need to choose bilidan.py!")
                                 @messageLabel.setText(error)
 			end
 		end
@@ -190,7 +194,7 @@ class BiliGui < Qt::MainWindow
 
 			# play all videos
 			urlHash.each_value do |value|
-				p "Now Playing: #{value}"
+				print _("Now Playing: ") + value
 
 				command = "#{pathText} #{parameter} #{value}"
 				@thread.start(command)
@@ -198,7 +202,7 @@ class BiliGui < Qt::MainWindow
 			end
 
 		else
-			error = "[ERR] you have to paste an URL!"
+			error = _("[ERR] you have to paste at least one URL/bangou!")
 			@messageLabel.setText(error)
 		end
 
@@ -224,12 +228,12 @@ class BiliGui < Qt::MainWindow
 	end
 
 	def bilidanChoose
-		bilidanBin = Qt::FileDialog.getOpenFileName(self, "Please choose your bilidan.py", "#{$userHome}", "Python files (*.py)")
+		bilidanBin = Qt::FileDialog.getOpenFileName(self, _("Please choose your bilidan.py"), "#{$userHome}", _("Python files (*.py)"))
 		unless bilidanBin == nil then
 			if bilidanBin.index("bilidan.py") then
 				@bilidanPath.setText(bilidanBin)
 			else
-				@messageLabel.setText("[WARN] You didn't choose bilidan.py!")
+				@messageLabel.setText(_("[WARN] You didn't choose bilidan.py!"))
 			end
 		end
 	end
@@ -260,7 +264,7 @@ class BiliGui < Qt::MainWindow
 	end
 
 	def biliLoad
-		playlist = Qt::FileDialog.getOpenFileName(self, "Please choose your playlist", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
+		playlist = Qt::FileDialog.getOpenFileName(self, _("Please choose your playlist"), "#{$configPath}/playlist", _("Playlist file (*.m3u8)"))
 		unless playlist == nil then
 			hash = BiliPlaylist.new.load(playlist)
 			str = ""
@@ -273,9 +277,9 @@ class BiliGui < Qt::MainWindow
 	
 	def biliSave
 		if @urlArea.toPlainText().empty? then
-			p "No video URL can be saved at all!"
+			print _("No video URL/bangou can be saved at all!")
 		else
-			filename = Qt::FileDialog.getSaveFileName(self, "Please choose save location", "#{$configPath}/playlist", "Playlist file (*.m3u8)")
+			filename = Qt::FileDialog.getSaveFileName(self, _("Please choose save location"), "#{$configPath}/playlist", _("Playlist file (*.m3u8)"))
 			unless filename == nil then
 				playlist = BiliPlaylist.new(@urlArea.toPlainText())
 				playlist.save(filename)

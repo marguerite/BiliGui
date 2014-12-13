@@ -15,18 +15,18 @@ module	BiliConfig
 			@name = name
 			@path = path
 
-			unless Dir.exists?(@path) then
+			unless Dir.exist?(@path) then
 				Dir.mkdir @path
 			end
 
-			unless Dir.exists?(File.join(@path,"playlist")) then
+			unless Dir.exist?(File.join(@path,"playlist")) then
 				Dir.mkdir(File.join(@path,"playlist"))
 			end
 
 			@config = File.join(path, name)
 			@configEntries = {}
 
-			unless File.exists?(@config) then
+			unless File.exist?(@config) then
 				biliTouch(@config)
 			else
 				io = File.open(@config, "r")
@@ -35,6 +35,8 @@ module	BiliConfig
 					key = line.gsub(/=.*/,"")
 					if line.index("mpvflags") then
 						value = line.gsub(/mpvflags=/,"")
+					elsif line.index("danmaku2assflags") then
+						value = line.gsub(/danmaku2assflags=/,"")
 					else
 						value = line.gsub(/.+=/,"")
 					end

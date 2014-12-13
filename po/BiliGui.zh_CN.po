@@ -1,0 +1,114 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2014 <marguerite@opensuse.org>
+# This file is distributed under the same license as the BiliGui package.
+# Marguerite Su <marguerite@opensuse.org>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.11\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-12-14 01:38+0800\n"
+"PO-Revision-Date: 2014-12-14 00:25+0800\n"
+"Last-Translator: Marguerite Su <marguerite@opensuse.org>\n"
+"Language-Team: Simplified Chinese <opensuse-zh@opensuse.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: ../BiliWidgets.rb:36
+msgid "BiliGui"
+msgstr "比利贵"
+
+#: ../BiliWidgets.rb:74
+msgid "BiliGui Playlist"
+msgstr "BiliGui 播放列表"
+
+#: ../BiliWidgets.rb:75
+msgid "BiliGui Settings"
+msgstr "BiliGui 设置"
+
+#: ../BiliWidgets.rb:76
+msgid "Bilibili.tv"
+msgstr "Bilibili.tv"
+
+#: ../BiliWidgets.rb:89
+msgid "Please paste Bilibili URL/bangou below"
+msgstr "请在下面粘贴 B 站 URL/番号"
+
+#: ../BiliWidgets.rb:90
+msgid "Visit bilibili.tv (experimental)"
+msgstr "访问 bilibili.tv (实验性)"
+
+#: ../BiliWidgets.rb:94
+msgid "Play"
+msgstr "播放"
+
+#: ../BiliWidgets.rb:95
+msgid "Clear"
+msgstr "清空"
+
+#: ../BiliWidgets.rb:114
+msgid "Load"
+msgstr "加载"
+
+#: ../BiliWidgets.rb:115
+msgid "Save"
+msgstr "保存"
+
+#: ../BiliWidgets.rb:137
+msgid "Please enter your bilidan's path:"
+msgstr "请输入 bilidan 的路径："
+
+#: ../BiliWidgets.rb:139
+msgid "Choose"
+msgstr "选择"
+
+#: ../BiliWidgets.rb:141
+msgid "mpv flags for bilidan:"
+msgstr "bilidan 的 mpv 参数："
+
+#: ../BiliWidgets.rb:144
+msgid "danmaku2ass flags for bilidan:"
+msgstr "bilidan 的 danmaku2ass 参数："
+
+#: ../BiliWidgets.rb:188
+msgid "[ERR] you need to choose bilidan.py!"
+msgstr "[ERR] 需要选择 bilidan.py！"
+
+#: ../BiliWidgets.rb:197
+msgid "Now Playing: "
+msgstr "正在播放："
+
+#: ../BiliWidgets.rb:205
+msgid "[ERR] you have to paste at least one URL/bangou!"
+msgstr "[ERR] 需要粘贴至少一个 URL/番号！"
+
+#: ../BiliWidgets.rb:231
+msgid "Please choose your bilidan.py"
+msgstr "请选择 bilidan.py"
+
+#: ../BiliWidgets.rb:231
+msgid "Python files (*.py)"
+msgstr "Python 文件 (*.py)"
+
+#: ../BiliWidgets.rb:236
+msgid "[WARN] You didn't choose bilidan.py!"
+msgstr "[WARN] 未选择 bilidan.py！"
+
+#: ../BiliWidgets.rb:267
+msgid "Please choose your playlist"
+msgstr "请选择播放列表"
+
+#: ../BiliWidgets.rb:267 ../BiliWidgets.rb:282
+msgid "Playlist file (*.m3u8)"
+msgstr "播放列表文件 (*.m3u8)"
+
+#: ../BiliWidgets.rb:280
+msgid "No video URL/bangou can be saved at all!"
+msgstr "根本没有可保存的视频 URL/番号！"
+
+#: ../BiliWidgets.rb:282
+msgid "Please choose save location"
+msgstr "请选择保存位置"
